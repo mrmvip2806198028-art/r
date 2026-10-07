@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>منصة التعليم العربية</title>
+<style>
+:root{--blue:#087bb7;--blue2:#16a7df;--ink:#0b2038;--muted:#4c6d87;--bg:#eef9ff;--card:#effaff;--white:#fff;--line:#cce5ef}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Tahoma,Arial,sans-serif;color:var(--ink);background:linear-gradient(180deg,#effcff,#eef7ff 55%,#f7fbff)}
+button{font:inherit;cursor:pointer}.site{min-height:100vh;overflow:hidden}
+.header{height:94px;background:#f9fdff;box-shadow:0 3px 18px #1679a81c;display:flex;align-items:center;padding:0 28px;gap:18px;position:sticky;top:0;z-index:50}
+.logo{margin-right:auto;width:55px;height:55px;object-fit:contain}.lang{border:1px solid #c8dce8;border-radius:24px;background:#f3f9fc;padding:9px 18px;font-size:18px;color:#22384e}.circleBtn{width:54px;height:54px;border-radius:50%;border:1px solid #b8dce9;background:#eefaff;color:#0781bd;font-size:25px;box-shadow:0 2px 10px #1385a826}
+.menu{position:relative}.menuDots{font-size:34px;line-height:1}.menuPanel{display:none;position:absolute;right:0;top:64px;width:270px;max-height:70vh;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:18px;padding:10px;box-shadow:0 18px 45px #0b385522}.menuPanel.open{display:block}.menuPanel button{width:100%;border:0;background:#fff;text-align:right;padding:13px;border-radius:11px;font-weight:700;color:var(--ink)}.menuPanel button:hover{background:#eefaff}
+.hero{padding:54px 5% 28px;text-align:center;background:radial-gradient(circle at 10% 20%,#e7fbff,transparent 30%),radial-gradient(circle at 90% 15%,#ddf7f7,transparent 30%)}
+.pill{display:inline-block;background:#fff;border:1px solid #d8e7ed;border-radius:40px;padding:12px 25px;margin:8px;font-size:21px;box-shadow:0 7px 20px #1b779214}.title{font-size:43px;color:#0584c0;font-weight:900;margin:18px auto;max-width:600px}.intro{max-width:650px;margin:15px auto;padding:20px 24px;background:#ffffffb8;border:1px solid #d5e7ee;border-radius:24px;font-size:23px;line-height:1.8;color:#4c6074;box-shadow:0 10px 30px #16799c10}
+.actions{max-width:640px;margin:25px auto;display:grid;grid-template-columns:1fr 1fr;gap:15px}.bigbtn{border:0;border-radius:38px;padding:16px 20px;font-size:22px;font-weight:800;background:linear-gradient(90deg,#0a83bd,#15a8df);color:white;box-shadow:0 9px 18px #1688b933}.wide{grid-column:1/-1}.outline{background:#fff;color:#20a3d7;border:1px solid #c9e6f1;box-shadow:none}
+.wrap{max-width:1050px;margin:auto;padding:28px 5%}.sectionTitle{text-align:center;color:#087db6;font-size:34px;margin:12px 0}.sub{text-align:center;color:#58748a;font-size:18px;margin:0 auto 24px}
+.subjectOrbit{height:620px;max-width:680px;margin:10px auto;position:relative;display:grid;place-items:center}.ring{position:absolute;border:1px dashed #a9d6e5;border-radius:50%}.r1{width:210px;height:210px}.r2{width:370px;height:370px}.r3{width:540px;height:540px}.cap{width:190px;max-height:150px;object-fit:contain;z-index:2}.subject{position:absolute;background:#effbff;border:1px solid #c5e2ed;border-radius:50%;width:72px;height:72px;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#0784bd;font-weight:800;box-shadow:0 5px 16px #087bb718}.subject b{font-size:27px}.s1{top:8%;left:44%}.s2{top:27%;left:70%}.s3{top:49%;left:69%}.s4{top:69%;left:45%}.s5{top:76%;left:26%}.s6{top:52%;left:7%}.s7{top:28%;left:25%}.s8{top:8%;left:45%}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:15px}.stat{padding:18px;background:#effaff;border:1px solid #cce5ef;border-radius:20px;display:flex;gap:12px;align-items:center;box-shadow:0 9px 22px #0a7fa912}.ico{width:52px;height:52px;border-radius:14px;background:#0a88c5;color:#fff;display:grid;place-items:center;font-size:25px}.stat strong{font-size:25px}.stat p{margin:3px 0;color:#60788a}
+.panel{background:#eefaff;border:1px solid #cbe4ef;border-radius:28px;padding:25px;margin:35px 0;box-shadow:0 18px 40px #0c719b12}.steps{display:grid;gap:14px}.step{background:#f8fdff;border:1px solid #d7eaf1;border-radius:24px;padding:18px 22px;display:flex;align-items:center;gap:18px}.num{width:48px;height:48px;border-radius:50%;background:#078ac9;color:white;display:grid;place-items:center;font-weight:900}.step h3{margin:0;font-size:22px}.step p{margin:4px 0 0;color:#58758a;font-size:17px}
+.featureGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}.feature{padding:22px;background:linear-gradient(135deg,#effaff,#e3f6ff);border:1px solid #cde5ee;border-radius:22px}.feature h3{color:#0782bd;font-size:25px;margin:0 0 7px}.feature p{color:#55748a;margin:0;line-height:1.7}
+.pageGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.pageCard{background:#effaff;border:1px solid #c9e3ed;border-radius:22px;padding:25px;text-align:center;min-height:160px;box-shadow:0 8px 20px #0877a912}.pageIcon{font-size:42px}.pageCard h3{margin:12px 0 0}
+.teachers{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.teacher{background:#effaff;border:1px solid #c9e3ed;border-radius:22px;padding:15px;text-align:center}.teacher img{width:88px;height:88px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:0 4px 15px #087aa833}.teacher h3{margin:8px 0 4px}.teacher p{margin:0;color:#5a7489}
+.float{position:fixed;bottom:22px;z-index:60;width:65px;height:65px;border-radius:50%;display:grid;place-items:center;font-size:29px;color:#fff;box-shadow:0 8px 25px #00577c44}.wa{left:22px;background:#27d366}.help{right:22px;background:#0588c8}.toast{position:fixed;right:22px;bottom:92px;background:#122338;color:#fff;border-radius:17px;padding:13px 18px;z-index:61;box-shadow:0 8px 20px #0004}.up{position:fixed;right:22px;bottom:98px;width:50px;height:50px;border:0;border-radius:15px;background:#dff3fb;color:#1883b4;font-size:25px;z-index:59;display:none}
+.footer{text-align:center;padding:45px;color:#668094}
+
+/* الوضع الليلي الوردي — مطابق لستايل الصورة المرجعية */
+body.night{
+  --blue:#d34b67;--blue2:#f19aaa;--ink:#f7e8ee;--muted:#d7a8b5;--bg:#160d18;--card:#211321;--white:#241521;--line:#673047;
+  color:var(--ink);
+  background:linear-gradient(180deg,#160d18 0%,#1c0d19 52%,#170b16 100%);
+  filter:none !important;
+}
+body.night .header{background:#171018;box-shadow:0 3px 18px #c43f6120}
+body.night .lang{border-color:#5d2941;background:#1b101a;color:#efc2ce}
+body.night .circleBtn{border-color:#642b45;background:#1b101a;color:#e75c78;box-shadow:0 2px 10px #d0476726}
+body.night .menuPanel{background:#211321;border-color:#673047;box-shadow:0 18px 45px #0008}
+body.night .menuPanel button{background:#211321;color:#f7e8ee}
+body.night .menuPanel button:hover{background:#301827}
+body.night .hero{background:radial-gradient(circle at 10% 20%,#3a1727,transparent 30%),radial-gradient(circle at 90% 15%,#2e1425,transparent 30%)}
+body.night .pill{background:#211321;border-color:#673047;color:#df6a82;box-shadow:0 7px 20px #d4476418}
+body.night .title{color:#e25a76;text-shadow:0 0 18px #d2476530}
+body.night .intro{background:#21121fb8;border-color:#633047;color:#e2b3bf;box-shadow:0 10px 30px #d0476710}
+body.night .bigbtn{background:linear-gradient(90deg,#c53f5a,#f1a2b2);color:#fff;box-shadow:0 9px 18px #d4496533}
+body.night .outline{background:#1d111c;color:#e9879a;border-color:#693047}
+body.night .sectionTitle{color:#e35c77}
+body.night .sub{color:#c99aa8}
+body.night .ring{border-color:#6c3149}
+body.night .subject{background:#241421;border-color:#693047;color:#e76a82;box-shadow:0 5px 16px #d4476718}
+body.night .stat{background:#211421;border-color:#673047;box-shadow:0 9px 22px #0005}
+body.night .ico{background:#c94360}
+body.night .stat p{color:#bd91a0}
+body.night .panel{background:#211421;border-color:#673047;box-shadow:0 18px 40px #0005}
+body.night .step{background:#251522;border-color:#663047}
+body.night .num{background:#cf4561}
+body.night .step p{color:#bd91a0}
+body.night .feature{background:linear-gradient(135deg,#251522,#301827);border-color:#673047}
+body.night .feature h3{color:#e05a75}
+body.night .feature p{color:#c29aa7}
+body.night .pageCard{background:#211421;border-color:#673047;box-shadow:0 8px 20px #0005}
+body.night .teacher{background:#211421;border-color:#673047}
+body.night .teacher p{color:#bd91a0}
+body.night .up{background:#3a1a2a;color:#e78aa0}
+body.night .footer{color:#9f7887}
+body.night .helpBox,body.night .accountBox{background:#211421;color:#f5e7ed}
+body.night .helpHead{background:#bd3e5b}
+body.night .helpMessages{background:#190f19}
+body.night .helpMsg.bot{background:#251522;border-color:#673047}
+body.night .helpInput{background:#211421;border-color:#673047}
+body.night .helpInput input{background:#1a1019;color:#f5e7ed;border-color:#673047}
+body.night .helpInput button,body.night .accountBox .primary{background:#c9425e}
+body.night .accountBox input,body.night .accountBox select{background:#1a1019;color:#f5e7ed;border-color:#673047}
+body.night .accountBox .secondary{background:#351b2a;color:#f1c4cf}
+body.night .accountClose{background:#351b2a;color:#f1c4cf}
+body.night .toast{background:#291522}
+body.night .up{display:none}
+
+@media(max-width:700px){.header{height:82px;padding:0 16px;gap:9px}.logo{width:45px}.circleBtn{width:48px;height:48px}.lang{font-size:17px;padding:8px 13px}.title{font-size:34px}.intro{font-size:19px}.pill{font-size:17px}.actions{gap:10px}.bigbtn{font-size:19px}.subjectOrbit{height:510px}.r3{width:430px;height:430px}.r2{width:300px;height:300px}.r1{width:165px;height:165px}.cap{width:145px}.subject{width:60px;height:60px}.subject b{font-size:22px}.stats,.featureGrid{grid-template-columns:1fr 1fr}.pageGrid{grid-template-columns:1fr 1fr}.teachers{grid-template-columns:1fr 1fr}.stat strong{font-size:20px}.stat p{font-size:13px}.step h3{font-size:19px}.step p{font-size:15px}}
+</style>
+</head>
+<body>
+<div class="site">
+<header class="header">
+<div class="menu"><button class="circleBtn menuDots" aria-label="فتح القائمة" onclick="toggleMenu()">⋮</button><div id="menuPanel" class="menuPanel">
+<button onclick="scrollToId('home')">👨‍🏫 الرئيسية</button>
+<button onclick="scrollToId('pages')">▶️ الدورات</button>
+<button onclick="scrollToId('teachers')">👨‍🏫 المدرسين</button>
+<button onclick="scrollToId('features')">💼 معرض الأعمال</button>
+<button onclick="scrollToId('journey')">📚 المدونة</button>
+<button onclick="menuMessage('المنتدى')">💬 المنتدى</button>
+<button onclick="menuMessage('الحصص المباشرة')">📡 الحصص المباشرة</button>
+<button onclick="scrollToId('pages')">📚 المواد الدراسية</button>
+<button onclick="scrollToId('pages')">📈 الصفوف الدراسية</button>
+<button onclick="menuMessage('المناهج الدولية')">🌐 المناهج الدولية</button>
+<button onclick="scrollToId('journey')">🗓️ خطة العام الدراسي</button>
+<button onclick="menuMessage('العروض')">% العروض</button>
+<button onclick="scrollToId('pages')">📝 الامتحانات</button>
+<button onclick="menuMessage('المكتبة العلمية')">📚 المكتبة العلمية</button>
+<button onclick="openAccount('login')">↪ تسجيل الدخول</button>
+</div></div>
+<button class="lang" id="langBtn" onclick="toggleLang()">🇬🇧 English</button><button class="circleBtn" onclick="toggleTheme()">☼</button><img class="logo" src="assets/logo.png">
+</header>
+
+<main id="home">
+<section class="hero">
+<div class="pill">● منصة التعليم العربية لإدارة التعليم</div>
+<div class="pill title">نبغة</div>
+<div class="intro">منصة متكاملة لإدارة الحصص، الواجبات، الاختبارات، وتقارير الأداء في مكان واحد – مصممة خصيصًا للمدارس والمراكز التعليمية والمعلمين أونلاين.</div>
+<div class="actions"><button class="bigbtn outline" onclick="alert('فيديو تعريفي تجريبي')">▶ الفيديو التعريفي</button><button class="bigbtn outline" onclick="scrollToId('pages')">جميع الدورات</button><button class="bigbtn wide" onclick="scrollToId('journey')">ابدأ تجربتك الآن ←</button><button class="bigbtn" onclick="openAccount('register')">إنشاء حساب ♙</button><button class="bigbtn" onclick="openAccount('login')">تسجيل الدخول ↪</button><button class="bigbtn wide" onclick="scrollToId('journey')">انضم كمدرب/معلم 🎓</button></div>
+</section>
+
+<section class="wrap">
+<div class="stats">
+<div class="stat"><div class="ico">▦</div><div><strong id="studentsCount">+ 10155 طالب</strong><p>مسجلين على المنصة</p></div></div>
+<div class="stat"><div class="ico">♧</div><div><strong id="schoolsCount">+ 22 مدرسة</strong><p>مدارس ومراكز تعليمية تستخدم المنصة</p></div></div>
+<div class="stat"><div class="ico">🎓</div><div><strong id="teachersCount">+ 56 معلم</strong><p>يشرحون ويديرون طلابهم عبر نبغة</p></div></div>
+<div class="stat"><div class="ico">☺</div><div><strong id="satisfactionCount">90% رضا العملاء</strong><p>متوسط رضا المستخدمين عن المنصة</p></div></div>
+</div>
+</section>
+
+<section class="wrap">
+<h2 class="sectionTitle">المواد الدراسية</h2><p class="sub">اختر المادة وابدأ التعلم</p>
+<div class="subjectOrbit"><div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div><img src="assets/cap.png" class="cap">
+<div class="subject s1"><b>▢</b>عربي</div><div class="subject s2"><b>▢</b>تاريخ</div><div class="subject s3"><b>▢</b>رياضيات</div><div class="subject s4"><b>▢</b>إنجليزي</div><div class="subject s5"><b>▢</b>برمجة</div><div class="subject s6"><b>▢</b>جغرافيا</div><div class="subject s7"><b>▢</b>كيمياء</div><div class="subject s8"><b>▢</b>فيزياء</div></div>
+</section>
+
+<section id="journey" class="wrap">
+<div class="panel"><h2 class="sectionTitle">رحلة المدرس 1</h2><p class="sub">من التسجيل لإنشاء دورة ناجحة</p><div class="steps">
+<div class="step"><div class="num">1</div><div><h3>إنشاء حساب مدرس</h3><p>بيانات أساسية وصلاحيات.</p></div></div>
+<div class="step"><div class="num">2</div><div><h3>إنشاء مسار/دورة</h3><p>تحديد المستوى/المنهج/الفصل.</p></div></div>
+<div class="step"><div class="num">3</div><div><h3>إضافة المحتوى والتفاعل</h3><p>فيديو، ملفات، واجبات، اختبارات.</p></div></div>
+<div class="step"><div class="num">4</div><div><h3>متابعة النتائج</h3><p>تقارير، شهادات، ونقاط تحفيزية.</p></div></div></div><button class="bigbtn wide" style="margin-top:20px" onclick="openTeacherRegister()">انضم الآن ←</button></div>
+<div class="panel"><h2 class="sectionTitle">رحلة الطالب</h2><p class="sub">من أول تسجيل لحد شهادة</p><div class="steps">
+<div class="step"><div class="num">1</div><div><h3>إنشاء حساب</h3><p>تسجيل سريع للطالب.</p></div></div>
+<div class="step"><div class="num">2</div><div><h3>اختيار مسار</h3><p>مستوى/منهج/صف أو دورة.</p></div></div>
+<div class="step"><div class="num">3</div><div><h3>تعلم + تفاعل</h3><p>فيديو، PDF، واجب، اختبار.</p></div></div>
+<div class="step"><div class="num">4</div><div><h3>قياس النتائج</h3><p>تقارير + شهادات + نقاط.</p></div></div></div><button class="bigbtn wide" style="margin-top:20px" onclick="openStudentRegister()">إنشاء حساب ←</button></div>
+</section>
+
+<section id="features" class="wrap">
+<div class="pill">✦ المزايا</div><h2 class="sectionTitle">مميزات هتفرق معاك 1</h2><div class="featureGrid">
+<div class="feature"><h3>دروس متعددة الأنواع 1</h3><p>فيديو + ملفات + واجبات + اختبارات داخل المسار.</p></div>
+<div class="feature"><h3>اختبارات وتقييم</h3><p>بنك أسئلة، درجات، تقارير، وقياس تقدم واضح.</p></div>
+<div class="feature"><h3>صفوف وصلاحيات</h3><p>طلاب/معلمين/مشرفين + صلاحيات حسب دور كل واحد.</p></div>
+<div class="feature"><h3>جدولة حصص</h3><p>جدول أسبوعي، تنبيهات، ومتابعة حضور.</p></div>
+<div class="feature"><h3>لوحة تقارير</h3><p>مؤشرات الأداء، التحصيل، والالتزام لكل طالب/فصل.</p></div>
+<div class="feature"><h3>شهادات ونقاط</h3><p>شهادات تلقائية، gamification، وشارات تحفيزية.</p></div>
+</div>
+</section>
+
+<section id="pages" class="wrap">
+<div class="pill">◉ صفحات المنصة</div><h2 class="sectionTitle">استكشف أقسام المنصة</h2><p class="sub">وصول سريع لكل صفحات المنصة من مكان واحد</p>
+<div class="pageGrid">
+<div class="pageCard"><div class="pageIcon">🎬</div><h3>الدورات</h3></div><div class="pageCard"><div class="pageIcon">👨‍🏫</div><h3>المدرسين</h3></div><div class="pageCard"><div class="pageIcon">📚</div><h3>المواد الدراسية</h3></div><div class="pageCard"><div class="pageIcon">🧮</div><h3>الصفوف الدراسية</h3></div><div class="pageCard"><div class="pageIcon">🗺️</div><h3>خطة العام الدراسي</h3></div><div class="pageCard"><div class="pageIcon">🏆</div><h3>لوحة الشرف</h3></div><div class="pageCard"><div class="pageIcon">📝</div><h3>الامتحانات</h3></div><div class="pageCard"><div class="pageIcon">🎞️</div><h3>تعليمات الاستخدام</h3></div><div class="pageCard"><div class="pageIcon">🔐</div><h3>تسجيل الدخول</h3></div></div>
+</section>
+
+<section id="teachers" class="wrap">
+<div class="pill">♙ أ/محمد ابراهيم (چيوستوريا)</div><h2 class="sectionTitle">جميع المدرسين</h2><div class="teachers"><div class="teacher"><img src="assets/teacher1.jpg"><h3>أ/ محمد إبراهيم</h3><p>10 سنوات خبرة • 3 مواد</p></div></div>
+</section>
+
+<section class="wrap"><div class="panel"><h2 class="sectionTitle">لوحة الشرف 🏆</h2><p class="sub">تكريم المتميزين وإنجازاتهم على المنصة</p><div style="background:#fff;border:1px dashed #c7dfe9;border-radius:22px;padding:45px;text-align:center;color:#087db6;font-size:25px">توجد سجلات في لوحة الشرف حتى الآن</div></div></section>
+</main>
+
+<button class="float wa" onclick="alert('فتح واتساب - تجريبي')">◔</button><button class="float help" onclick="openHelp()">◉</button><button class="up" id="up" onclick="scrollTo({top:0,behavior:'smooth'})">↑</button>
+<div class="toast">محتاج مساعدة؟<br><b>دوس عليّ ←</b></div>
+<footer class="footer">منصة تعليمية تجريبية • 2026</footer>
+<style>
+.helpOverlay{display:none;position:fixed;inset:0;background:#0008;z-index:120;padding:18px;align-items:center;justify-content:center}.helpOverlay.open{display:flex}.helpBox{width:min(520px,100%);height:min(650px,90vh);background:#fff;border-radius:25px;box-shadow:0 25px 80px #0006;display:flex;flex-direction:column;overflow:hidden;color:#163044}.helpHead{background:#087fba;color:#fff;padding:18px 20px;display:flex;justify-content:space-between;align-items:center}.helpHead h2{margin:0;font-size:21px}.helpClose{border:0;background:#ffffff33;color:#fff;border-radius:50%;width:36px;height:36px;font-size:22px}.helpMessages{flex:1;padding:16px;overflow:auto;background:#f4fbfe}.helpMsg{max-width:82%;padding:11px 14px;border-radius:16px;margin:8px 0;line-height:1.55}.helpMsg.bot{background:#fff;border:1px solid #d7eaf1;margin-right:auto}.helpMsg.user{background:#087fba;color:#fff;margin-left:auto}.helpInput{display:flex;gap:8px;padding:12px;border-top:1px solid #d8e8ee;background:#fff}.helpInput input{flex:1;border:1px solid #cfe0e8;border-radius:14px;padding:12px;font:inherit}.helpInput button{border:0;background:#087fba;color:#fff;border-radius:14px;padding:0 18px;font-weight:700}
+</style>
+<div class="helpOverlay" id="helpOverlay"><div class="helpBox">
+<div class="helpHead"><h2>💬 أ/محمد ابراهيم (چيوستوريا)</h2><button class="helpClose" onclick="closeHelp()">×</button></div>
+<div class="helpMessages" id="helpMessages"><div class="helpMsg bot">أهلًا بك 👋 أنا أ/محمد ابراهيم (چيوستوريا). اكتب مشكلتك أو سؤالك وسأساعدك.</div></div>
+<div class="helpInput"><input id="helpText" placeholder="اكتب رسالتك هنا..." onkeydown="if(event.key==='Enter')sendHelp()"><button onclick="sendHelp()">إرسال</button></div>
+</div></div>
+
+</div>
+<script>
+function toggleMenu(){document.getElementById('menuPanel').classList.toggle('open')}
+function scrollToId(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth'});document.getElementById('menuPanel').classList.remove('open')}
+function menuMessage(name){document.getElementById('menuPanel').classList.remove('open');alert(name+' — سيتم إضافة الصفحة قريبًا.')}
+function toggleTheme(){document.body.classList.toggle('night');localStorage.setItem('nabghaTheme',document.body.classList.contains('night')?'night':'light')}
+(function(){if(localStorage.getItem('nabghaTheme')==='night')document.body.classList.add('night')})()
+let currentLang = localStorage.getItem('nabghaLang') || 'ar';
+function setLangText(selector, ar, en){document.querySelectorAll(selector).forEach((e,i)=>{e.textContent=currentLang==='en'?en[i]??en:ar[i]??ar});}
+function applyLanguage(){
+ const en=currentLang==='en'; document.documentElement.lang=en?'en':'ar'; document.documentElement.dir=en?'ltr':'rtl';
+ setLangText('#menuPanel button',['👨‍🏫 الرئيسية','▶️ الدورات','👨‍🏫 المدرسين','💼 معرض الأعمال','📚 المدونة','💬 المنتدى','📡 الحصص المباشرة','📚 المواد الدراسية','📈 الصفوف الدراسية','🌐 المناهج الدولية','🗓️ خطة العام الدراسي','% العروض','📝 الامتحانات','📚 المكتبة العلمية','↪ تسجيل الدخول'],['👨‍🏫 Home','▶️ Courses','👨‍🏫 Teachers','💼 Portfolio','📚 Blog','💬 Forum','📡 Live Classes','📚 Subjects','📈 Classes','🌐 International Curricula','🗓️ Academic Year Plan','% Offers','📝 Exams','📚 Scientific Library','↪ Log In']);
+ setLangText('.hero .pill',['● منصة التعليم العربية لإدارة التعليم'],['● Arabic Education Platform for Education Management']);
+ setLangText('.intro',['منصة متكاملة لإدارة الحصص، الواجبات، الاختبارات، وتقارير الأداء في مكان واحد – مصممة خصيصًا للمدارس والمراكز التعليمية والمعلمين أونلاين.'],['An all-in-one platform for managing lessons, assignments, exams, and performance reports in one place — designed for schools, educational centers, and online teachers.']);
+ setLangText('.actions .bigbtn',['▶ الفيديو التعريفي','جميع الدورات','ابدأ تجربتك الآن ←','إنشاء حساب ♙','تسجيل الدخول ↪','انضم كمدرب/معلم 🎓'],['▶ Intro Video','All Courses','Start Your Experience →','Create Account ♙','Log In ↪','Join as a Teacher 🎓']);
+ setLangText('.stat p',['مسجلين على المنصة','مدارس ومراكز تعليمية تستخدم المنصة','يشرحون ويديرون طلابهم عبر نبغة','متوسط رضا المستخدمين عن المنصة'],['Registered on the platform','Schools and educational centers use the platform','Teach and manage their students through Nabgha','Average user satisfaction']);
+ setLangText('section.wrap:nth-of-type(2) .sectionTitle',['المواد الدراسية'],['Subjects']); setLangText('section.wrap:nth-of-type(2) .sub',['اختر المادة وابدأ التعلم'],['Choose a subject and start learning']);
+ setLangText('.subject',['عربي','تاريخ','رياضيات','إنجليزي','برمجة','جغرافيا','كيمياء','فيزياء'],['Arabic','History','Mathematics','English','Programming','Geography','Chemistry','Physics']);
+ const jp=document.querySelectorAll('#journey .panel');
+ if(jp[0]){setLangText('#journey .panel:nth-child(1) .sectionTitle',['رحلة المدرس 1'],['Teacher Journey 1']);setLangText('#journey .panel:nth-child(1) .sub',['من التسجيل لإنشاء دورة ناجحة'],['From registration to creating a successful course']);setLangText('#journey .panel:nth-child(1) .step h3',['إنشاء حساب مدرس','إنشاء مسار/دورة','إضافة المحتوى والتفاعل','متابعة النتائج'],['Create Teacher Account','Create a Path/Course','Add Content & Interaction','Track Results']);setLangText('#journey .panel:nth-child(1) .step p',['بيانات أساسية وصلاحيات.','تحديد المستوى/المنهج/الفصل.','فيديو، ملفات، واجبات، اختبارات.','تقارير، شهادات، ونقاط تحفيزية.'],['Basic information and permissions.','Set level, curriculum, and term.','Videos, files, assignments, and exams.','Reports, certificates, and reward points.']);setLangText('#journey .panel:nth-child(1) .bigbtn',['انضم الآن ←'],['Join Now →']);}
+ if(jp[1]){setLangText('#journey .panel:nth-child(2) .sectionTitle',['رحلة الطالب'],['Student Journey']);setLangText('#journey .panel:nth-child(2) .sub',['من أول تسجيل لحد شهادة'],['From first registration to certificate']);setLangText('#journey .panel:nth-child(2) .step h3',['إنشاء حساب','اختيار مسار','تعلم + تفاعل','قياس النتائج'],['Create Account','Choose a Path','Learn + Interact','Measure Results']);setLangText('#journey .panel:nth-child(2) .step p',['تسجيل سريع للطالب.','مستوى/منهج/صف أو دورة.','فيديو، PDF، واجب، اختبار.','تقارير + شهادات + نقاط.'],['Quick student registration.','Level, curriculum, class, or course.','Video, PDF, assignment, and exam.','Reports + certificates + points.']);setLangText('#journey .panel:nth-child(2) .bigbtn',['إنشاء حساب ←'],['Create Account →']);}
+ setLangText('#features .pill',['✦ المزايا'],['✦ Features']);setLangText('#features .sectionTitle',['مميزات هتفرق معاك 1'],['Features That Make a Difference 1']);setLangText('#features .feature h3',['دروس متعددة الأنواع 1','اختبارات وتقييم','صفوف وصلاحيات','جدولة حصص','لوحة تقارير','شهادات ونقاط'],['Multiple Lesson Types 1','Tests & Assessment','Classes & Permissions','Lesson Scheduling','Reports Dashboard','Certificates & Points']);setLangText('#features .feature p',['فيديو + ملفات + واجبات + اختبارات داخل المسار.','بنك أسئلة، درجات، تقارير، وقياس تقدم واضح.','طلاب/معلمين/مشرفين + صلاحيات حسب دور كل واحد.','جدول أسبوعي، تنبيهات، ومتابعة حضور.','مؤشرات الأداء، التحصيل، والالتزام لكل طالب/فصل.','شهادات تلقائية، gamification، وشارات تحفيزية.'],['Video + files + assignments + exams inside the path.','Question bank, grades, reports, and clear progress tracking.','Students/teachers/admins + role-based permissions.','Weekly schedule, notifications, and attendance tracking.','Performance, achievement, and engagement indicators for each student/class.','Automatic certificates, gamification, and motivational badges.']);
+ setLangText('#pages .pill',['◉ صفحات المنصة'],['◉ Platform Pages']);setLangText('#pages .sectionTitle',['استكشف أقسام المنصة'],['Explore Platform Sections']);setLangText('#pages .sub',['وصول سريع لكل صفحات المنصة من مكان واحد'],['Quick access to all platform pages in one place']);setLangText('#pages .pageCard h3',['الدورات','المدرسين','المواد الدراسية','الصفوف الدراسية','خطة العام الدراسي','لوحة الشرف','الامتحانات','تعليمات الاستخدام','تسجيل الدخول'],['Courses','Teachers','Subjects','Classes','Academic Year Plan','Honor Board','Exams','User Guide','Log In']);
+ setLangText('#teachers .pill',['♙ أ/محمد ابراهيم (چيوستوريا)'],['♙ Top Teachers']);setLangText('#teachers .sectionTitle',['جميع المدرسين'],['All Teachers']);setLangText('#teachers .teacher p',['10 سنوات خبرة • 3 مواد','خبرة متنوعة • 3 مواد','6 سنوات خبرة • مادة واحدة','8 سنوات خبرة • 3 مواد','5 سنوات خبرة • مادة واحدة','8 سنوات خبرة • مادة واحدة'],['10 years of experience • 3 subjects','Diverse experience • 3 subjects','6 years of experience • 1 subject','8 years of experience • 3 subjects','5 years of experience • 1 subject','8 years of experience • 1 subject']);
+ const honor=document.querySelector('main > section.wrap:last-of-type');if(honor){setLangText('main > section.wrap:last-of-type .sectionTitle',['لوحة الشرف 🏆'],['Honor Board 🏆']);setLangText('main > section.wrap:last-of-type .sub',['تكريم المتميزين وإنجازاتهم على المنصة'],['Celebrating outstanding users and their achievements on the platform']);setLangText('main > section.wrap:last-of-type div[style]',['توجد سجلات في لوحة الشرف حتى الآن'],['There are no honor board records yet']);}
+ setLangText('.footer',['منصة تعليمية تجريبية • 2026'],['Educational Platform Demo • 2026']);
+ document.getElementById('langBtn').textContent=en?'🇪🇬 العربية':'🇬🇧 English';
+ updateHelpLanguage(); updateAccountLanguage(); updateStats();
+}
+function toggleLang(){currentLang=currentLang==='ar'?'en':'ar';localStorage.setItem('nabghaLang',currentLang);applyLanguage();}
+window.addEventListener('scroll',()=>{document.getElementById('up').style.display=scrollY>500?'grid':'none'})
+</script>
+
+<style>
+.accountOverlay{display:none;position:fixed;inset:0;background:#0008;z-index:100;padding:18px;align-items:center;justify-content:center}
+.accountOverlay.open{display:flex}.accountBox{width:min(460px,100%);background:#fff;border-radius:24px;padding:24px;box-shadow:0 25px 70px #0005;position:relative;color:#163044}.accountBox h2{margin:0 0 8px}.accountBox .hint{color:#67808f;margin-bottom:15px}.accountBox input,.accountBox select{width:100%;padding:13px;margin:6px 0;border:1px solid #cfe0e8;border-radius:12px;font:inherit}.accountBox .primary{width:100%;border:0;border-radius:12px;background:#087fba;color:#fff;padding:13px;margin-top:9px;font-weight:700}.accountBox .secondary{width:100%;border:0;border-radius:12px;background:#eef7fb;color:#17445b;padding:12px;margin-top:8px}.accountClose{position:absolute;left:14px;top:14px;border:0;background:#eef4f7;border-radius:50%;width:36px;height:36px;font-size:20px}.accountMsg{margin-top:10px;padding:10px;border-radius:10px;display:none}.accountMsg.ok{display:block;background:#eaf8ee;color:#176b2b}.accountMsg.err{display:block;background:#fff0f0;color:#a02020}.roleNote{font-size:13px;color:#718896;margin-top:5px}
+</style>
+<div class="accountOverlay" id="accountOverlay"><div class="accountBox">
+<button class="accountClose" onclick="closeAccount()">×</button>
+<h2 id="accountTitle">إنشاء حساب</h2><div class="hint" id="accountHint">أنشئ حسابك على نبغة</div>
+<div id="registerForm"><input id="regName" placeholder="الاسم بالكامل"><input id="regEmail" type="email" placeholder="البريد الإلكتروني"><input id="regPassword" type="password" placeholder="كلمة المرور"><select id="regRole"><option value="student">طالب</option><option value="teacher">مدرس</option><option value="school">مدرسة / مركز تعليمي</option></select><div class="roleNote">اختيار نوع الحساب مهم لأنه يحدد العداد الذي سيزيد بعد التسجيل.</div><button class="primary" onclick="registerAccount()">إنشاء الحساب</button><button class="secondary" onclick="openAccount('login')">عندي حساب بالفعل — تسجيل الدخول</button></div>
+<div id="loginForm" style="display:none"><input id="loginEmail" type="email" placeholder="البريد الإلكتروني"><input id="loginPassword" type="password" placeholder="كلمة المرور"><button class="primary" onclick="loginAccount()">تسجيل الدخول</button><button class="secondary" onclick="openAccount('register')">ليس لدي حساب — إنشاء حساب</button></div>
+<div id="accountMsg" class="accountMsg"></div>
+</div></div>
+<script>
+function openTeacherRegister(){openAccount('register').then(()=>{const role=document.getElementById('regRole');if(role)role.value='teacher';});}
+function openStudentRegister(){openAccount('register').then(()=>{const role=document.getElementById('regRole');if(role)role.value='student';});}
+async function openAccount(mode){document.getElementById('accountOverlay').classList.add('open');document.getElementById('accountTitle').textContent=mode==='login'?'تسجيل الدخول':'إنشاء حساب';document.getElementById('accountHint').textContent=mode==='login'?'ادخل بيانات حسابك في نبغة':'أنشئ حسابك على نبغة';document.getElementById('registerForm').style.display=mode==='login'?'none':'block';document.getElementById('loginForm').style.display=mode==='login'?'block':'none';document.getElementById('accountMsg').className='accountMsg'}
+function closeAccount(){document.getElementById('accountOverlay').classList.remove('open')}
+function accountMessage(t,ok){const e=document.getElementById('accountMsg');e.textContent=t;e.className='accountMsg '+(ok?'ok':'err')}
+async function registerAccount(){const body={name:regName.value.trim(),email:regEmail.value.trim(),password:regPassword.value,role:regRole.value};if(!body.name||!body.email||!body.password)return accountMessage('اكتب كل البيانات المطلوبة.',false);try{const r=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const j=await r.json();if(!r.ok)return accountMessage(j.error||'حدث خطأ أثناء التسجيل.',false);accountMessage('تم إنشاء الحساب بنجاح ✅ يمكنك الآن تسجيل الدخول.',true);updateStats();}catch(e){accountMessage('السيرفر غير متصل. شغّل المنصة من خلال السيرفر ثم جرّب مرة أخرى.',false)}}
+async function loginAccount(){const body={email:loginEmail.value.trim(),password:loginPassword.value};try{const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const j=await r.json();if(!r.ok)return accountMessage(j.error||'بيانات الدخول غير صحيحة.',false);localStorage.setItem('nabghaUser',JSON.stringify(j.user));accountMessage('تم تسجيل الدخول بنجاح يا '+j.user.name+' ✅',true)}catch(e){accountMessage('السيرفر غير متصل. شغّل المنصة من خلال السيرفر ثم جرّب مرة أخرى.',false)}}
+async function updateStats(){try{const r=await fetch('/api/stats');if(!r.ok)return;const s=await r.json();studentsCount.textContent=currentLang==='en'?'+ '+s.students+' students':'+ '+s.students+' طالب';schoolsCount.textContent=currentLang==='en'?'+ '+s.schools+' schools':'+ '+s.schools+' مدرسة';teachersCount.textContent=currentLang==='en'?'+ '+s.teachers+' teachers':'+ '+s.teachers+' معلم';satisfactionCount.textContent=currentLang==='en'?s.satisfaction+'% customer satisfaction':s.satisfaction+'% رضا العملاء'}catch(e){}}
+updateStats();
+</script>
+
+<script>
+function openHelp(){document.getElementById('helpOverlay').classList.add('open');setTimeout(()=>document.getElementById('helpText').focus(),100)}
+function updateHelpLanguage(){const h=document.querySelector('.helpHead h2'),w=document.querySelector('#helpMessages .helpMsg.bot'),i=document.getElementById('helpText'),b=document.querySelector('.helpInput button');if(currentLang==='en'){h.textContent='💬 Nabgha Assistant';w.textContent='Welcome 👋 I am Nabgha Assistant. Write your problem or question and I will help you.';i.placeholder='Write your message here...';b.textContent='Send'}else{h.textContent='💬 أ/محمد ابراهيم (چيوستوريا)';w.textContent='أهلًا بك 👋 أنا أ/محمد ابراهيم (چيوستوريا). اكتب مشكلتك أو سؤالك وسأساعدك.';i.placeholder='اكتب رسالتك هنا...';b.textContent='إرسال'}}
+function closeHelp(){document.getElementById('helpOverlay').classList.remove('open')}
+function addHelpMsg(text,type){const box=document.getElementById('helpMessages');const d=document.createElement('div');d.className='helpMsg '+type;d.textContent=text;box.appendChild(d);box.scrollTop=box.scrollHeight}
+function helpReply(t){const x=t.toLowerCase();if(x.includes('حساب')||x.includes('تسجيل'))return 'لو عندك مشكلة في الحساب، اضغط تسجيل الدخول أو إنشاء حساب من أعلى الصفحة. لو ظهرت رسالة خطأ، اكتبها لي هنا.';if(x.includes('درس')||x.includes('دورة'))return 'تقدر تختار الدورات والمواد من قسم صفحات المنصة، ولو محتاج مساعدة في دورة معينة اكتب اسمها.';if(x.includes('مدرس'))return 'لو أنت مدرس، اختر إنشاء حساب ثم اختر نوع الحساب: مدرس.';if(x.includes('كلمة')||x.includes('باسورد')||x.includes('password'))return 'لو نسيت كلمة المرور، اكتب لي البريد الإلكتروني وسنحتاج لاحقًا لإضافة استعادة كلمة المرور.';return 'تم استلام رسالتك ✅ اكتب لي تفاصيل أكثر عن المشكلة وسأساعدك خطوة بخطوة.'}
+function updateAccountLanguage(){const en=currentLang==='en';document.getElementById('accountTitle').textContent=en?'Create Account':'إنشاء حساب';document.getElementById('accountHint').textContent=en?'Create your Nabgha account':'أنشئ حسابك على نبغة';document.getElementById('regName').placeholder=en?'Full name':'الاسم بالكامل';document.getElementById('regEmail').placeholder=en?'Email address':'البريد الإلكتروني';document.getElementById('regPassword').placeholder=en?'Password':'كلمة المرور';document.querySelector('#regRole option[value="student"]').textContent=en?'Student':'طالب';document.querySelector('#regRole option[value="teacher"]').textContent=en?'Teacher':'مدرس';document.querySelector('#regRole option[value="school"]').textContent=en?'School / Educational Center':'مدرسة / مركز تعليمي';document.querySelector('#registerForm .roleNote').textContent=en?'Account type determines which counter increases after registration.':'اختيار نوع الحساب مهم لأنه يحدد العداد الذي سيزيد بعد التسجيل.';document.querySelector('#registerForm .primary').textContent=en?'Create Account':'إنشاء الحساب';document.querySelector('#registerForm .secondary').textContent=en?'I already have an account — Log In':'عندي حساب بالفعل — تسجيل الدخول';document.getElementById('loginEmail').placeholder=en?'Email address':'البريد الإلكتروني';document.getElementById('loginPassword').placeholder=en?'Password':'كلمة المرور';document.querySelector('#loginForm .primary').textContent=en?'Log In':'تسجيل الدخول';document.querySelector('#loginForm .secondary').textContent=en?'I do not have an account — Create Account':'ليس لدي حساب — إنشاء حساب';}
+async function sendHelp(){const input=document.getElementById('helpText');const text=input.value.trim();if(!text)return;addHelpMsg(text,'user');input.value='';try{await fetch('/api/help',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text,user:JSON.parse(localStorage.getItem('nabghaUser')||'null')})})}catch(e){}setTimeout(()=>addHelpMsg(helpReply(text),'bot'),450)}
+applyLanguage();
+</script>
+</body>
+</html>
