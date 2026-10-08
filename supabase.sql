@@ -7,6 +7,57 @@ create table if not exists public.admin_users (
   created_at timestamptz not null default now()
 );
 
+
+-- تهيئة/التحقق من المدير الحالي من خلال دالة آمنة على Supabase.
+-- لا يحتاج المتصفح إلى قراءة جدول admin_users قبل التهيئة.
+create or replace function public.ensure_current_admin()
+returns table(is_admin boolean, role text)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  uid uuid := auth.uid();
+  existing_role text;
+  has_admin boolean;
+begin
+  if uid is null then
+    return query select false, null::text;
+    return;
+  end if;
+
+  select a.role into existing_role
+  from public.admin_users a
+  where a.user_id = uid
+  limit 1;
+
+  if existing_role is not null then
+    return query select true, existing_role;
+    return;
+  end if;
+
+  select exists (select 1 from public.admin_users) into has_admin;
+  if not has_admin then
+    insert into public.admin_users (user_id, role)
+    values (uid, 'owner')
+    on conflict (user_id) do nothing;
+    select a.role into existing_role
+    from public.admin_users a
+    where a.user_id = uid
+    limit 1;
+    if existing_role is not null then
+      return query select true, existing_role;
+      return;
+    end if;
+  end if;
+
+  return query select false, null::text;
+end;
+$$;
+
+revoke all on function public.ensure_current_admin() from public;
+grant execute on function public.ensure_current_admin() to authenticated;
+
 create table if not exists public.materials (
   id uuid primary key default gen_random_uuid(),
   title text not null,
@@ -65,3 +116,28 @@ using (
   bucket_id = 'materials' and
   exists (select 1 from public.admin_users a where a.user_id = auth.uid())
 );
+
+
+-- القراءة العامة الآمنة للمحتوى المنشور:
+-- تسمح للطلاب والزوار برؤية نفس المواد التي نشرها المدير،
+-- بدون إعطائهم صلاحية مباشرة لقراءة/تعديل جداول الإدارة.
+create or replace function public.get_published_materials()
+returns table (
+  id uuid,
+  title text,
+  type text,
+  description text,
+  file_url text,
+  created_at timestamptz
+)
+language sql
+security definer
+set search_path = public
+as $$
+  select m.id, m.title, m.type, m.description, m.file_url, m.created_at
+  from public.materials m
+  order by m.created_at desc;
+$$;
+
+revoke all on function public.get_published_materials() from public;
+grant execute on function public.get_published_materials() to anon, authenticated;

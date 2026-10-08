@@ -77,13 +77,15 @@ body.night .up{display:none}
 
 @media(max-width:700px){.header{height:82px;padding:0 16px;gap:9px}.logo{width:45px}.circleBtn{width:48px;height:48px}.lang{font-size:17px;padding:8px 13px}.title{font-size:34px}.intro{font-size:19px}.pill{font-size:17px}.actions{gap:10px}.bigbtn{font-size:19px}.subjectOrbit{height:510px}.r3{width:430px;height:430px}.r2{width:300px;height:300px}.r1{width:165px;height:165px}.cap{width:145px}.subject{width:60px;height:60px}.subject b{font-size:22px}.stats,.featureGrid{grid-template-columns:1fr 1fr}.pageGrid{grid-template-columns:1fr 1fr}.teachers{grid-template-columns:1fr 1fr}.stat strong{font-size:20px}.stat p{font-size:13px}.step h3{font-size:19px}.step p{font-size:15px}}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
 </head>
 <body>
 <div class="site">
 <header class="header">
 <div class="menu"><button class="circleBtn menuDots" aria-label="فتح القائمة" onclick="toggleMenu()">⋮</button><div id="menuPanel" class="menuPanel">
 <button onclick="scrollToId('home')">👨‍🏫 الرئيسية</button>
-<button onclick="scrollToId('pages')">▶️ الدورات</button>
+<button onclick="openPublishedMaterials()">▶️ الدورات</button>
 <button onclick="scrollToId('teachers')">👨‍🏫 المدرسين</button>
 <button onclick="scrollToId('features')">💼 معرض الأعمال</button>
 <button onclick="scrollToId('journey')">📚 المدونة</button>
@@ -98,7 +100,7 @@ body.night .up{display:none}
 <button onclick="menuMessage('المكتبة العلمية')">📚 المكتبة العلمية</button>
 <button onclick="openAccount('login')">↪ تسجيل الدخول</button>
 </div></div>
-<button class="lang" id="langBtn" onclick="toggleLang()">🇬🇧 English</button><button class="circleBtn" onclick="toggleTheme()">☼</button><img class="logo" src="assets/logo.png">
+<button class="lang" id="langBtn" onclick="toggleLang()">🇬🇧 English</button><button class="circleBtn" onclick="toggleTheme()">☼</button><img class="logo" id="nabghaLogo" src="assets/logo.png" alt="نبغة">
 </header>
 
 <main id="home">
@@ -148,11 +150,11 @@ body.night .up{display:none}
 </div>
 </section>
 
-<section id="published-materials" class="wrap" style="padding:35px 0"><div class="pill">📚 المحتوى الجديد</div><h2 class="sectionTitle">الفيديوهات والامتحانات والاختبارات</h2><p class="sub">المحتوى الذي ينشره المدير يظهر هنا تلقائيًا.</p><div id="publishedMaterials" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px"></div></section>
+<section id="published-materials" class="wrap" style="display:none;padding:35px 0"><div class="pill">📚 المحتوى الجديد</div><h2 class="sectionTitle">الفيديوهات والامتحانات والاختبارات</h2><p class="sub">المحتوى الذي ينشره المدير يظهر هنا تلقائيًا.</p><div id="publishedMaterials" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px"></div></section>
 <section id="pages" class="wrap">
 <div class="pill">◉ صفحات المنصة</div><h2 class="sectionTitle">استكشف أقسام المنصة</h2><p class="sub">وصول سريع لكل صفحات المنصة من مكان واحد</p>
 <div class="pageGrid">
-<div class="pageCard"><div class="pageIcon">🎬</div><h3>الدورات</h3></div><div class="pageCard"><div class="pageIcon">👨‍🏫</div><h3>المدرسين</h3></div><div class="pageCard"><div class="pageIcon">📚</div><h3>المواد الدراسية</h3></div><div class="pageCard"><div class="pageIcon">🧮</div><h3>الصفوف الدراسية</h3></div><div class="pageCard"><div class="pageIcon">🗺️</div><h3>خطة العام الدراسي</h3></div><div class="pageCard"><div class="pageIcon">🏆</div><h3>لوحة الشرف</h3></div><div class="pageCard"><div class="pageIcon">📝</div><h3>الامتحانات</h3></div><div class="pageCard"><div class="pageIcon">🎞️</div><h3>تعليمات الاستخدام</h3></div><div class="pageCard"><div class="pageIcon">🔐</div><h3>تسجيل الدخول</h3></div></div>
+<div class="pageCard" onclick="openPublishedMaterials()" style="cursor:pointer"><div class="pageIcon">🎬</div><h3>الدورات</h3></div><div class="pageCard"><div class="pageIcon">👨‍🏫</div><h3>المدرسين</h3></div><div class="pageCard"><div class="pageIcon">📚</div><h3>المواد الدراسية</h3></div><div class="pageCard"><div class="pageIcon">🧮</div><h3>الصفوف الدراسية</h3></div><div class="pageCard"><div class="pageIcon">🗺️</div><h3>خطة العام الدراسي</h3></div><div class="pageCard"><div class="pageIcon">🏆</div><h3>لوحة الشرف</h3></div><div class="pageCard"><div class="pageIcon">📝</div><h3>الامتحانات</h3></div><div class="pageCard"><div class="pageIcon">🎞️</div><h3>تعليمات الاستخدام</h3></div><div class="pageCard"><div class="pageIcon">🔐</div><h3>تسجيل الدخول</h3></div></div>
 </section>
 
 <section id="teachers" class="wrap">
@@ -218,6 +220,38 @@ window.addEventListener('scroll',()=>{document.getElementById('up').style.displa
 <div id="loginForm" style="display:none"><input id="loginEmail" type="email" placeholder="البريد الإلكتروني"><input id="loginPassword" type="password" placeholder="كلمة المرور"><button class="primary" onclick="loginAccount()">تسجيل الدخول</button><button class="secondary" onclick="openAccount('register')">ليس لدي حساب — إنشاء حساب</button></div>
 <div id="accountMsg" class="accountMsg"></div>
 </div></div>
+<style>
+/* لوحة الإدارة داخل نفس المنصة — مخفية افتراضياً */
+.adminOverlay{display:none;position:fixed;inset:0;z-index:10000;background:#071421f5;overflow:auto;padding:18px}
+.adminOverlay.open{display:block}
+.adminBox{width:min(1180px,100%);margin:18px auto;background:#f4f8fb;color:#163044;border-radius:24px;min-height:calc(100vh - 36px);box-shadow:0 25px 90px #0009;overflow:hidden}
+.adminTop{background:#082335;color:#fff;padding:18px 5%;display:flex;justify-content:space-between;align-items:center;gap:12px;position:sticky;top:0;z-index:2}
+.adminTop h2{margin:0;font-size:22px}.adminTop button{border:1px solid #527187;background:transparent;color:#fff;padding:9px 14px;border-radius:10px;cursor:pointer}
+.adminWrap{width:min(1120px,92%);margin:24px auto}.adminCards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.adminCard,.adminSection{background:#fff;border:1px solid #dbe8ef;border-radius:18px;padding:20px}.adminCard b{display:block;font-size:28px;margin-top:8px}
+.adminSection{margin-top:18px;overflow:auto}.adminForm{display:grid;grid-template-columns:1fr 1fr;gap:12px}.adminForm input,.adminForm select,.adminForm textarea{width:100%;padding:12px;border:1px solid #ccdce5;border-radius:10px;font:inherit}.adminForm textarea{min-height:90px}.adminFull{grid-column:1/-1}.adminPrimary{background:#087ea8;color:#fff;border:0;border-radius:10px;padding:12px 18px;font:inherit;font-weight:700;cursor:pointer}.adminMsg{margin-top:10px}.adminItem{padding:14px;border:1px solid #e2ebef;border-radius:12px;margin-top:10px}.adminItem a{color:#087ea8;font-weight:700}.adminDel{border:0;background:#ffe9e9;color:#a31e1e;border-radius:8px;padding:7px 10px;cursor:pointer}.adminEmpty{color:#78909c;padding:20px;text-align:center}
+.adminLogin{width:min(420px,100%);margin:12vh auto;background:#102536;color:#fff;border:1px solid #21455e;border-radius:24px;padding:28px;box-shadow:0 25px 80px #0008}.adminLogin h2{margin:0 0 8px}.adminHint{color:#a9c3d3;margin-bottom:22px}.adminLogin input{box-sizing:border-box;width:100%;padding:14px;margin:7px 0;border-radius:12px;border:1px solid #35566b;background:#0a1a28;color:#fff;font:inherit}.adminLogin button{width:100%;padding:14px;margin-top:10px;border:0;border-radius:12px;background:#10a7dc;color:#fff;font:inherit;font-weight:800;cursor:pointer}.adminError{margin-top:12px;color:#ffb4b4;min-height:20px;line-height:1.7}
+@media(max-width:800px){.adminCards{grid-template-columns:repeat(2,1fr)}.adminForm{grid-template-columns:1fr}}@media(max-width:500px){.adminCards{grid-template-columns:1fr}.adminOverlay{padding:8px}.adminBox{margin:0;min-height:calc(100vh - 16px)}}
+</style>
+<div id="materialsOverlay" class="adminOverlay" aria-hidden="true" style="z-index:9999"><div class="adminBox"><header class="adminTop"><h2>🎬 الفيديوهات والدروس والاختبارات</h2><button type="button" aria-label="إغلاق" onclick="closePublishedMaterials()" style="width:44px;height:44px;padding:0;font-size:26px;font-weight:900;border-radius:50%">×</button></header><main class="adminWrap"><div id="allPublishedMaterials" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px"><div class="adminEmpty">جاري تحميل المحتوى...</div></div></main></div></div>
+<div class="adminOverlay" id="adminOverlay" aria-hidden="true">
+  <div id="adminLoginView" class="adminLogin">
+    <h2>🔐 دخول الإدارة</h2><div class="adminHint">هذه المنطقة مخفية داخل منصة نبغة ومخصصة للحسابات المصرح لها فقط.</div>
+    <input id="adminEmail" type="email" placeholder="البريد الإلكتروني" autocomplete="username">
+    <input id="adminPassword" type="password" placeholder="كلمة المرور" autocomplete="current-password">
+    <button id="adminLoginBtn" type="button">دخول آمن</button><div class="adminError" id="adminLoginMsg"></div>
+  </div>
+  <div id="adminPanelView" class="adminBox" style="display:none">
+    <header class="adminTop"><h2>🛡️ لوحة الإدارة</h2><div style="display:flex;gap:8px"><button type="button" aria-label="تسجيل الخروج" onclick="adminLogout()">تسجيل الخروج</button><button type="button" aria-label="إغلاق لوحة الإدارة" onclick="closeAdminPanel()" style="width:44px;height:44px;padding:0;font-size:26px;font-weight:900;border-radius:50%">×</button></div></header>
+    <main class="adminWrap">
+      <div class="adminCards"><div class="adminCard">طلاب<b id="adminStudents">-</b></div><div class="adminCard">مدرسون<b id="adminTeachers">-</b></div><div class="adminCard">مدارس / مراكز<b id="adminSchools">-</b></div><div class="adminCard">المواد المنشورة<b id="adminMaterialsCount">-</b></div></div>
+      <section class="adminSection"><h2>➕ إضافة فيديو / امتحان / اختبار / ملف</h2><div class="adminForm"><input id="adminTitle" placeholder="اسم المحتوى"><select id="adminType"><option value="video">فيديو</option><option value="exam">امتحان</option><option value="test">اختبار</option><option value="file">ملف / PDF</option></select><textarea id="adminDescription" class="adminFull" placeholder="وصف مختصر"></textarea><input id="adminFile" class="adminFull" type="file" accept="video/*,application/pdf,image/*,.doc,.docx,.ppt,.pptx,.zip"><button class="adminPrimary adminFull" type="button" onclick="adminAddMaterial()">رفع ونشر للناس</button></div><div id="adminUploadMsg" class="adminMsg"></div></section>
+      <section class="adminSection"><h2>📚 المحتوى المنشور</h2><div id="adminMaterials"></div></section>
+      <section class="adminSection"><h2>👥 المستخدمون</h2><table style="width:100%;border-collapse:collapse"><thead><tr><th>الاسم</th><th>البريد</th><th>الدور</th><th>التاريخ</th><th></th></tr></thead><tbody id="adminUsers"></tbody></table></section>
+      <section class="adminSection"><h2>💬 رسائل المساعدة</h2><div id="adminHelp"></div></section>
+    </main>
+  </div>
+</div>
+
 <script>
 function openTeacherRegister(){openAccount('register').then(()=>{const role=document.getElementById('regRole');if(role)role.value='teacher';});}
 function openStudentRegister(){openAccount('register').then(()=>{const role=document.getElementById('regRole');if(role)role.value='student';});}
@@ -240,4 +274,133 @@ function updateAccountLanguage(){const en=currentLang==='en';document.getElement
 async function sendHelp(){const input=document.getElementById('helpText');const text=input.value.trim();if(!text)return;addHelpMsg(text,'user');input.value='';try{await fetch('/api/help',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text,user:JSON.parse(localStorage.getItem('nabghaUser')||'null')})})}catch(e){}setTimeout(()=>addHelpMsg(helpReply(text),'bot'),450)}
 applyLanguage();
 </script>
-<script>(async()=>{try{const r=await fetch('/api/materials');const data=await r.json();const el=document.getElementById('publishedMaterials');if(!el)return;const names={video:'🎬 فيديو',exam:'📝 امتحان',test:'🧪 اختبار',file:'📄 ملف'};el.innerHTML=Array.isArray(data)&&data.length?data.map(x=>`<article style="background:#fff;border:1px solid #dbe8ef;border-radius:18px;padding:18px"><div style="font-size:28px">${names[x.type]||'📚'}</div><h3>${String(x.title).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}</h3><p>${String(x.description||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}</p><a href="${x.file_url}" target="_blank" rel="noopener" style="font-weight:700">فتح / تنزيل</a></article>`).join(''):'<div>لا يوجد محتوى منشور حتى الآن.</div>'}catch(e){console.error(e)}})();</script></body></html>
+<script>
+function escPublic(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+async function getPublicMaterials(){
+ let lastError='';
+ try{
+  if(window.supabase&&window.SUPABASE_URL&&window.SUPABASE_ANON_KEY){
+   const sb=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
+   // نستخدم دالة عامة آمنة حتى يرى جميع الطلاب نفس المحتوى المنشور.
+   const {data,error}=await sb.rpc('get_published_materials');
+   if(!error&&Array.isArray(data)) return data;
+   if(error) lastError=error.message||'تعذر قراءة المحتوى المنشور';
+  }else lastError='إعدادات Supabase غير مكتملة';
+ }catch(e){lastError=e.message||'تعذر الاتصال بـ Supabase'}
+ try{
+   const r=await fetch('/api/materials');
+   if(r.ok){const d=await r.json();if(Array.isArray(d))return d}
+ }catch(e){}
+ return [];
+}
+function materialCard(x){const names={video:'🎬 فيديو / درس',exam:'📝 امتحان',test:'🧪 اختبار',file:'📄 ملف'};return `<article style="background:#fff;border:1px solid #dbe8ef;border-radius:18px;padding:18px"><div style="font-size:28px">${names[x.type]||'📚'}</div><h3>${escPublic(x.title)}</h3><p>${escPublic(x.description||'')}</p><a href="${escPublic(x.file_url)}" target="_blank" rel="noopener" style="font-weight:700">فتح / مشاهدة / تنزيل</a></article>`}
+async function openPublishedMaterials(){document.getElementById('menuPanel').classList.remove('open');const ov=document.getElementById('materialsOverlay'),box=document.getElementById('allPublishedMaterials');ov.classList.add('open');ov.setAttribute('aria-hidden','false');box.innerHTML='<div class="adminEmpty">جاري تحميل المحتوى...</div>';const data=await getPublicMaterials();box.innerHTML=data.length?data.map(materialCard).join(''):'<div class="adminEmpty">لا يوجد فيديوهات أو دروس أو اختبارات منشورة حتى الآن.</div>'}
+function closePublishedMaterials(){const ov=document.getElementById('materialsOverlay');ov.classList.remove('open');ov.setAttribute('aria-hidden','true')}
+</script>
+<script>
+let adminClicks=0,adminClickTimer=null;
+const nabghaLogo=document.getElementById('nabghaLogo');
+if(nabghaLogo){nabghaLogo.style.cursor='default';nabghaLogo.addEventListener('click',()=>{adminClicks++;clearTimeout(adminClickTimer);adminClickTimer=setTimeout(()=>adminClicks=0,1800);if(adminClicks>=5){adminClicks=0;openAdminGate();}})}
+async function openAdminGate(){
+  const ov=document.getElementById('adminOverlay'); ov.classList.add('open'); ov.setAttribute('aria-hidden','false');
+  const r=await fetch('/api/admin/me').catch(()=>null); const j=r?await r.json().catch(()=>({})):{};
+  if(j.admin){showAdminPanel(); await loadAdminData();} else {document.getElementById('adminLoginView').style.display='block';document.getElementById('adminPanelView').style.display='none';document.getElementById('adminEmail').focus();}
+}
+function showAdminPanel(){document.getElementById('adminLoginView').style.display='none';document.getElementById('adminPanelView').style.display='block'}
+function closeAdminPanel(){document.getElementById('adminOverlay').classList.remove('open');document.getElementById('adminOverlay').setAttribute('aria-hidden','true')}
+async function adminLogin(){
+ const msg=document.getElementById('adminLoginMsg'),btn=document.getElementById('adminLoginBtn');msg.textContent='';btn.disabled=true;btn.textContent='جارٍ التحقق...';
+ try{
+  if(!window.supabase||!window.SUPABASE_URL||!window.SUPABASE_ANON_KEY||window.SUPABASE_ANON_KEY.includes('PUT_YOUR'))throw new Error('إعدادات Supabase غير مكتملة: تأكد من تحميل supabase-config.js واتصال الإنترنت.');
+  const sb=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
+  const {data,error}=await sb.auth.signInWithPassword({email:document.getElementById('adminEmail').value.trim(),password:document.getElementById('adminPassword').value});
+  if(error)throw new Error(/invalid login credentials/i.test(error.message||'')?'البريد الإلكتروني أو كلمة المرور غير صحيحة في Supabase.':error.message);
+  const {data:check,error:ce}=await sb.rpc('ensure_current_admin');
+  if(ce)throw new Error('إعداد المدير في Supabase غير مكتمل. نفّذ supabase.sql كاملًا.');
+  const row=Array.isArray(check)?check[0]:check;
+  if(!row||!row.is_admin){await sb.auth.signOut();throw new Error('هذا الحساب ليس لديه صلاحية الإدارة.');}
+  const session=data.session;if(!session?.access_token)throw new Error('لم يتم إنشاء جلسة الإدارة.');
+  const sr=await fetch('/api/admin/supabase-session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({access_token:session.access_token})});
+  const sj=await sr.json().catch(()=>({}));if(!sr.ok)throw new Error(sj.error||'تعذر إنشاء جلسة الإدارة.');
+  showAdminPanel();await loadAdminData();
+ }catch(e){msg.textContent=e.message||'تعذر تسجيل الدخول.'}
+ finally{btn.disabled=false;btn.textContent='دخول آمن'}
+}
+document.getElementById('adminLoginBtn').addEventListener('click',adminLogin);document.getElementById('adminPassword').addEventListener('keydown',e=>{if(e.key==='Enter')adminLogin()});
+async function loadAdminData(){
+ const r=await fetch('/api/admin/data');if(r.status===401){document.getElementById('adminLoginView').style.display='block';document.getElementById('adminPanelView').style.display='none';return}
+ const j=await r.json();['students','teachers','schools'].forEach(k=>document.getElementById('admin'+k[0].toUpperCase()+k.slice(1)).textContent=j.stats[k]);
+ const mats=await fetch('/api/materials').then(r=>r.json());document.getElementById('adminMaterialsCount').textContent=mats.length||0;document.getElementById('adminMaterials').innerHTML=mats.length?mats.map(x=>`<div class="adminItem"><b>${adminEsc(x.title)}</b> — ${adminTypeName(x.type)}<div>${adminEsc(x.description||'')}</div><div style="margin-top:8px"><a href="${adminEsc(x.file_url)}" target="_blank" rel="noopener">فتح / تنزيل</a> <button class="adminDel" onclick="adminRemoveMaterial('${x.id}')">حذف</button></div></div>`).join(''):'<div class="adminEmpty">لا يوجد محتوى منشور</div>';
+ document.getElementById('adminUsers').innerHTML=j.users.length?j.users.map(u=>`<tr><td>${adminEsc(u.name)}</td><td>${adminEsc(u.email)}</td><td>${({student:'طالب',teacher:'مدرس',school:'مدرسة / مركز تعليمي'}[u.role]||u.role)}</td><td>${new Date(u.createdAt).toLocaleString('ar-EG')}</td><td><button class="adminDel" onclick="adminRemoveUser('${u.id}')">حذف</button></td></tr>`).join(''):'<tr><td colspan="5" class="adminEmpty">لا يوجد مستخدمون</td></tr>';
+ document.getElementById('adminHelp').innerHTML=j.helpMessages.length?j.helpMessages.map(x=>`<div style="padding:12px 0;border-bottom:1px solid #edf2f5"><b>${adminEsc(x.user?.name||'زائر')}</b> — ${new Date(x.createdAt).toLocaleString('ar-EG')}<div style="margin-top:6px">${adminEsc(x.message)}</div></div>`).join(''):'<div class="adminEmpty">لا توجد رسائل</div>';
+}
+function adminTypeName(t){return {video:'فيديو',exam:'امتحان',test:'اختبار',file:'ملف / PDF'}[t]||t}function adminEsc(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+async function adminAddMaterial(){
+ const f=document.getElementById('adminFile').files[0],title=document.getElementById('adminTitle'),desc=document.getElementById('adminDescription'),type=document.getElementById('adminType'),msg=document.getElementById('adminUploadMsg');
+ if(!title.value.trim()||!f){msg.textContent='اكتب اسم المحتوى واختر الملف.';return} msg.textContent='جاري الرفع والنشر للجميع...';
+ try{
+  if(!window.supabase||!window.SUPABASE_URL||!window.SUPABASE_ANON_KEY)throw new Error('إعدادات Supabase غير مكتملة.');
+  const sb=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
+  const {data:{user}}=await sb.auth.getUser(); if(!user)throw new Error('جلسة الإدارة غير موجودة. سجل الدخول مرة أخرى.');
+  const safeName=f.name.replace(/[^a-zA-Z0-9._-]/g,'_'); const path=`${user.id}/${crypto.randomUUID()}-${safeName}`;
+  // رفع قابل للاستكمال (TUS) مع شريط تقدم، بدل انتظار upload التقليدي للملف كاملًا.
+  await uploadMaterialResumable(f,path,user,msg);
+  const pub=sb.storage.from('materials').getPublicUrl(path); const file_url=pub.data.publicUrl;
+  const ins=await sb.from('materials').insert({title:title.value.trim(),type:type.value,description:desc.value.trim(),file_url,file_path:path,created_by:user.id}).select().single();
+  if(ins.error)throw ins.error;
+  title.value='';desc.value='';document.getElementById('adminFile').value='';msg.textContent='تم النشر بنجاح ✅ الآن سيظهر لكل زوار المنصة.';loadAdminData();
+ }catch(e){
+  try{const r=await fetch('/api/admin/materials',{method:'POST',headers:{'Content-Type':'application/octet-stream','X-Title':title.value.trim(),'X-Type':type.value,'X-Description':desc.value.trim(),'X-Filename':f.name},body:f});const j=await r.json().catch(()=>({}));if(r.ok){title.value='';desc.value='';document.getElementById('adminFile').value='';msg.textContent='تم النشر بنجاح ✅';loadAdminData();return}}catch(_){}
+  msg.textContent='فشل النشر: '+(e.message||'خطأ غير معروف');
+ }
+}
+
+async function uploadMaterialResumable(file,path,user,msg){
+ const base=window.SUPABASE_URL.replace(/\/$/,'');
+ const token=(await window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY).auth.getSession()).data.session?.access_token;
+ if(!token) throw new Error('جلسة الإدارة غير موجودة. سجل الدخول مرة أخرى.');
+ const endpoint=base+'/storage/v1/upload/resumable';
+ const b64=v=>btoa(unescape(encodeURIComponent(v)));
+ const meta=[
+   'bucketName '+b64('materials'),
+   'objectName '+b64(path),
+   'contentType '+b64(file.type||'application/octet-stream')
+ ].join(',');
+ const create=await fetch(endpoint,{method:'POST',headers:{
+   'Authorization':'Bearer '+token,'x-upsert':'false','Upload-Length':String(file.size),
+   'Upload-Metadata':meta,'Tus-Resumable':'1.0.0','Content-Type':'application/offset+octet-stream'
+ }});
+ if(!create.ok) throw new Error('تعذر بدء رفع الملف ('+create.status+').');
+ let location=create.headers.get('Location');
+ if(!location) throw new Error('لم يتم إنشاء جلسة رفع.');
+ if(location.startsWith('/')) location=base+location;
+ const chunkSize=6*1024*1024;
+ let offset=0;
+ while(offset<file.size){
+   const end=Math.min(offset+chunkSize,file.size);
+   const chunk=file.slice(offset,end);
+   let sent=false,lastErr=null;
+   for(let attempt=0;attempt<3&&!sent;attempt++){
+     try{
+       const r=await fetch(location,{method:'PATCH',headers:{
+         'Authorization':'Bearer '+token,'Tus-Resumable':'1.0.0',
+         'Upload-Offset':String(offset),'Content-Type':'application/offset+octet-stream'
+       },body:chunk});
+       if(!r.ok) throw new Error('فشل رفع جزء من الملف ('+r.status+').');
+       const serverOffset=parseInt(r.headers.get('Upload-Offset')||end,10);
+       offset=serverOffset;
+       sent=true;
+     }catch(e){lastErr=e; await new Promise(res=>setTimeout(res,700*(attempt+1)));}
+   }
+   if(!sent) throw lastErr||new Error('توقف رفع الملف.');
+   const pct=file.size?Math.round(offset/file.size*100):100;
+   msg.textContent=`جاري رفع الملف... ${pct}%`;
+ }
+ msg.textContent='تم رفع الملف، جاري نشره...';
+}
+async function adminRemoveMaterial(id){if(!confirm('حذف هذا المحتوى؟'))return;try{const sb=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);const {data:item}=await sb.from('materials').select('file_path').eq('id',id).single();if(item?.file_path)await sb.storage.from('materials').remove([item.file_path]);const {error}=await sb.from('materials').delete().eq('id',id);if(error)throw error;loadAdminData();return}catch(e){}const r=await fetch('/api/admin/materials/'+encodeURIComponent(id),{method:'DELETE'});if(!r.ok)alert('تعذر الحذف');loadAdminData()}
+async function adminRemoveUser(id){if(!confirm('حذف هذا المستخدم؟'))return;const r=await fetch('/api/admin/users/'+encodeURIComponent(id),{method:'DELETE'});if(r.ok)loadAdminData();else alert('تعذر الحذف')}
+async function adminLogout(){await fetch('/api/admin/logout',{method:'POST'});closeAdminPanel();document.getElementById('adminLoginView').style.display='block';document.getElementById('adminPanelView').style.display='none'}
+</script>
+
+</body></html>

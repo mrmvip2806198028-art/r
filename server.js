@@ -11,8 +11,8 @@ if (!fs.existsSync(UPLOADS)) fs.mkdirSync(UPLOADS, { recursive: true });
 const ADMIN_EMAIL = String(process.env.ADMIN_EMAIL || 'admin@nabgha.local').trim().toLowerCase();
 const ADMIN_PASSWORD = String(process.env.ADMIN_PASSWORD || 'change-me-now');
 const adminSessions = new Map();
-const SUPABASE_URL = String(process.env.SUPABASE_URL || '').replace(/\/$/, '');
-const SUPABASE_ANON_KEY = String(process.env.SUPABASE_ANON_KEY || '');
+const SUPABASE_URL = String(process.env.SUPABASE_URL || 'https://tlywcfgqlgbuugkhebmb.supabase.co').replace(/\/$/, '');
+const SUPABASE_ANON_KEY = String(process.env.SUPABASE_ANON_KEY || 'sb_publishable_ZpQDbZGYK80v_0sZKF5oIQ_uSnujdRS');
 
 function parseCookies(req) {
   const out = {};

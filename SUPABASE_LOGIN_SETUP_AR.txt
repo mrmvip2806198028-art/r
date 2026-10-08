@@ -1,0 +1,27 @@
+إعداد تسجيل دخول الإدارة عبر Supabase
+
+تم وضع Publishable key الذي أرسلته في supabase-config.js وربط admin-login.html بمصادقة Supabase.
+رابط Supabase المستخدم في النسخة الحالية: https://tlywcfgqlgbuugkhebmb.supabase.co
+رابط المشروع الموجود في الملف: https://tlywcfgqlgbuugkhebmb.supabase.co
+
+لا يزال يلزم إكمال الإعداد داخل Supabase:
+1) Authentication > Users: أنشئ/تأكد من وجود مستخدم بالبريد الذي تريد استخدامه واضبط كلمة مروره من لوحة Supabase.
+2) نفّذ ملف supabase.sql في SQL Editor.
+3) أضف UID الخاص بالمستخدم إلى public.admin_users باستخدام SQL Editor بعد إنشاء الجدول:
+   insert into public.admin_users (user_id) values ('ضع-هنا-UID-المستخدم');
+4) تأكد أن سياسات RLS الموجودة في supabase.sql مفعّلة.
+5) ارفع ملفات الموقع كاملة إلى استضافتك مع admin-login.html وadmin.html وsupabase-config.js.
+
+مهم: لا يمكن تحويل كلمة مرور المدير تلقائيًا بمجرد تعديل ملف HTML؛ يجب إنشاء المستخدم أو ضبط كلمة المرور من Supabase Authentication. لا تشارك مفاتيح secret أو service_role في الواجهة.
+
+
+إصلاح منصة نبغة 8: بعد نجاح تسجيل الدخول عبر Supabase يتم الآن إنشاء جلسة الإدارة على السيرفر قبل فتح لوحة الإدارة، وتم تحسين رسالة Invalid login credentials.
+
+
+في منصة نبغة 8: بعد تسجيل الدخول بنجاح، إذا كان جدول admin_users فارغًا، يتم إنشاء صلاحية المدير لأول حساب تلقائيًا عبر الدالة الآمنة claim_first_admin. يجب تنفيذ supabase.sql مرة واحدة في SQL Editor. إذا كان هناك مدير موجود بالفعل، يجب إضافة UID للحساب الجديد يدويًا.
+
+
+إصلاح النسخة 10: تم نقل التحقق/تهيئة أول مدير إلى دالة Supabase آمنة ensure_current_admin لتجنب خطأ Failed to fetch الناتج عن قراءة admin_users من المتصفح قبل التهيئة.
+
+
+منصة نبغة 12: تم تضمين مكتبة Supabase في الصفحة وتحميل supabase-config.js تلقائيًا. كما تمت إضافة زر X واضح أعلى لوحة الإدارة لإغلاقها.
