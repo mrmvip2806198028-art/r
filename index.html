@@ -330,7 +330,21 @@ document.getElementById('adminLoginBtn').addEventListener('click',adminLogin);do
 async function loadAdminData(){
  const r=await fetch('/api/admin/data');if(r.status===401){document.getElementById('adminLoginView').style.display='block';document.getElementById('adminPanelView').style.display='none';return}
  const j=await r.json();['students','teachers','schools'].forEach(k=>document.getElementById('admin'+k[0].toUpperCase()+k.slice(1)).textContent=j.stats[k]);
- const mats=await fetch('/api/materials').then(r=>r.json());document.getElementById('adminMaterialsCount').textContent=mats.length||0;document.getElementById('adminMaterials').innerHTML=mats.length?mats.map(x=>`<div class="adminItem"><b>${adminEsc(x.title)}</b> — ${adminTypeName(x.type)}<div>${adminEsc(x.description||'')}</div><div style="margin-top:8px"><a href="${adminEsc(x.file_url)}" target="_blank" rel="noopener">فتح / تنزيل</a> <button class="adminDel" onclick="adminRemoveMaterial('${x.id}')">حذف</button></div></div>`).join(''):'<div class="adminEmpty">لا يوجد محتوى منشور</div>';
+ let mats=[];
+ // اقرأ نفس جدول Supabase الذي تُحفظ فيه المنشورات، بدل عرض بيانات السيرفر المحلي فقط.
+ try {
+   if(window.supabase&&window.SUPABASE_URL&&window.SUPABASE_ANON_KEY){
+     const sb=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
+     const {data,error}=await sb.from('materials').select('id,title,type,description,file_url,file_path,created_at').order('created_at',{ascending:false});
+     if(!error&&Array.isArray(data)) mats=data;
+   }
+ } catch(e) { console.warn('تعذر قراءة منشورات Supabase',e); }
+ // التوافق مع النسخ القديمة التي تخزّن المنشورات محليًا.
+ if(!mats.length){
+   try { const mr=await fetch('/api/materials'); if(mr.ok){const md=await mr.json();if(Array.isArray(md))mats=md;} } catch(e) {}
+ }
+ document.getElementById('adminMaterialsCount').textContent=mats.length;
+ document.getElementById('adminMaterials').innerHTML=mats.length?mats.map(x=>`<div class="adminItem"><b>${adminEsc(x.title)}</b> — ${adminTypeName(x.type)}<div>${adminEsc(x.description||'')}</div><div style="margin-top:8px"><a href="${adminEsc(x.file_url)}" target="_blank" rel="noopener">فتح / تنزيل</a> <button class="adminDel" onclick="adminRemoveMaterial('${x.id}')">حذف</button></div></div>`).join(''):'<div class="adminEmpty">لا يوجد محتوى منشور</div>';
  document.getElementById('adminUsers').innerHTML=j.users.length?j.users.map(u=>`<tr><td>${adminEsc(u.name)}</td><td>${adminEsc(u.email)}</td><td>${({student:'طالب',teacher:'مدرس',school:'مدرسة / مركز تعليمي'}[u.role]||u.role)}</td><td>${new Date(u.createdAt).toLocaleString('ar-EG')}</td><td><button class="adminDel" onclick="adminRemoveUser('${u.id}')">حذف</button></td></tr>`).join(''):'<tr><td colspan="5" class="adminEmpty">لا يوجد مستخدمون</td></tr>';
  document.getElementById('adminHelp').innerHTML=j.helpMessages.length?j.helpMessages.map(x=>`<div style="padding:12px 0;border-bottom:1px solid #edf2f5"><b>${adminEsc(x.user?.name||'زائر')}</b> — ${new Date(x.createdAt).toLocaleString('ar-EG')}<div style="margin-top:6px">${adminEsc(x.message)}</div></div>`).join(''):'<div class="adminEmpty">لا توجد رسائل</div>';
 }
