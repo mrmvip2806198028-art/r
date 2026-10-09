@@ -33,3 +33,10 @@
 
 
 مهم في النسخة 16: نفّذ supabase.sql كاملًا مرة واحدة. تم إضافة get_published_materials لجعل الدورات عامة لكل الطلاب والزوار.
+
+تحديث الاستمرارية لـ Back4App (مهم):
+- شغّل ملف supabase.sql كاملًا من Supabase Dashboard > SQL Editor بعد أخذ نسخة احتياطية.
+- أُضيفت دوال get_platform_stats و record_platform_registration وجدول platform_registrations لتظل أعداد التسجيلات محفوظة خارج قرص Back4App.
+- الفيديوهات والملفات تُرفع إلى Supabase Storage في bucket باسم materials، وبياناتها إلى جدول materials. إذا فشل رفع Supabase فلن يحفظ الموقع نسخة محلية مؤقتة قد تختفي عند إعادة التشغيل.
+- اترك SUPABASE_URL و SUPABASE_ANON_KEY كما هما في إعدادات التطبيق، ولا تضف Service Role Key إلى الواجهة أو ملفات عامة.
+- هذا الإصلاح يحافظ على آلية تسجيل الدخول الحالية. حسابات المستخدمين نفسها ما زالت تعتمد على التطبيق الحالي وملف data.json؛ للحفظ الدائم الكامل لحسابات الدخول يلزم نقل المصادقة إلى Supabase Auth.

@@ -244,7 +244,7 @@ window.addEventListener('scroll',()=>{document.getElementById('up').style.displa
     <header class="adminTop"><h2>🛡️ لوحة الإدارة</h2><div style="display:flex;gap:8px"><button type="button" aria-label="تسجيل الخروج" onclick="adminLogout()">تسجيل الخروج</button><button type="button" aria-label="إغلاق لوحة الإدارة" onclick="closeAdminPanel()" style="width:44px;height:44px;padding:0;font-size:26px;font-weight:900;border-radius:50%">×</button></div></header>
     <main class="adminWrap">
       <div class="adminCards"><div class="adminCard">طلاب<b id="adminStudents">-</b></div><div class="adminCard">مدرسون<b id="adminTeachers">-</b></div><div class="adminCard">مدارس / مراكز<b id="adminSchools">-</b></div><div class="adminCard">المواد المنشورة<b id="adminMaterialsCount">-</b></div></div>
-      <section class="adminSection"><h2>➕ إضافة فيديو / امتحان / اختبار / ملف</h2><div class="adminForm"><input id="adminTitle" placeholder="اسم المحتوى"><select id="adminType"><option value="video">فيديو</option><option value="exam">امتحان</option><option value="test">اختبار</option><option value="file">ملف / PDF</option></select><textarea id="adminDescription" class="adminFull" placeholder="وصف مختصر"></textarea><input id="adminFile" class="adminFull" type="file" accept="video/*,application/pdf,image/*,.doc,.docx,.ppt,.pptx,.zip"><button class="adminPrimary adminFull" type="button" onclick="adminAddMaterial()">رفع ونشر للناس</button></div><div id="adminUploadMsg" class="adminMsg"></div></section>
+      <section class="adminSection"><h2>➕ إضافة فيديو / امتحان / اختبار / ملف</h2><div class="adminForm"><input id="adminTitle" placeholder="اسم المحتوى"><select id="adminType"><option value="video">فيديو</option><option value="exam">امتحان</option><option value="test">اختبار</option><option value="file">ملف / PDF</option></select><textarea id="adminDescription" class="adminFull" placeholder="وصف مختصر"></textarea><div class="adminFull" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><label><input type="radio" name="materialSource" value="url" checked onchange="toggleMaterialSource()"> رابط فيديو YouTube</label><label><input type="radio" name="materialSource" value="file" onchange="toggleMaterialSource()"> رفع ملف</label></div><input id="adminVideoUrl" class="adminFull" type="url" placeholder="الصق رابط فيديو YouTube هنا — مثال: https://www.youtube.com/watch?v=..." dir="ltr"><input id="adminFile" class="adminFull" type="file" accept="video/*,application/pdf,image/*,.doc,.docx,.ppt,.pptx,.zip" style="display:none"><small class="adminFull">سيتم تشغيل فيديو YouTube داخل المنصة للطالب، دون فتح موقع YouTube في صفحة منفصلة.</small><button class="adminPrimary adminFull" type="button" onclick="adminAddMaterial()">نشر المحتوى</button></div><div id="adminUploadMsg" class="adminMsg"></div></section>
       <section class="adminSection"><h2>📚 المحتوى المنشور</h2><div id="adminMaterials"></div></section>
       <section class="adminSection"><h2>👥 المستخدمون</h2><table style="width:100%;border-collapse:collapse"><thead><tr><th>الاسم</th><th>البريد</th><th>الدور</th><th>التاريخ</th><th></th></tr></thead><tbody id="adminUsers"></tbody></table></section>
       <section class="adminSection"><h2>💬 رسائل المساعدة</h2><div id="adminHelp"></div></section>
@@ -277,15 +277,24 @@ applyLanguage();
 <script>
 function escPublic(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 async function getPublicMaterials(){
-  // اجمع المحتوى من المصدرين؛ بعض النسخ القديمة قد تحفظ المحتوى على السيرفر المحلي.
+  // اقرأ المحتوى المنشور من Supabase. لو الـ RPC غير موجودة/قديمة، جرّب الجدول مباشرة.
   const byId = new Map();
+  let supabaseError = null;
   try{
     if(window.supabase&&window.SUPABASE_URL&&window.SUPABASE_ANON_KEY){
       const sb=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
-      const {data,error}=await sb.rpc('get_published_materials');
-      if(!error&&Array.isArray(data)) data.forEach(x=>byId.set(String(x.id),x));
+      const rpc=await sb.rpc('get_published_materials');
+      if(!rpc.error&&Array.isArray(rpc.data)) rpc.data.forEach(x=>byId.set(String(x.id),x));
+      else {
+        supabaseError=rpc.error;
+        const direct=await sb.from('materials').select('id,title,type,description,file_url,created_at').order('created_at',{ascending:false});
+        if(!direct.error&&Array.isArray(direct.data)) direct.data.forEach(x=>byId.set(String(x.id),x));
+        else supabaseError=direct.error||rpc.error;
+      }
+    } else {
+      supabaseError=new Error('إعدادات Supabase غير موجودة في الصفحة.');
     }
-  }catch(e){console.warn('تعذر تحميل محتوى Supabase',e)}
+  }catch(e){supabaseError=e;console.warn('تعذر تحميل محتوى Supabase',e)}
   try{
     const r=await fetch('/api/materials',{cache:'no-store'});
     if(r.ok){
@@ -293,10 +302,13 @@ async function getPublicMaterials(){
       if(Array.isArray(local)) local.forEach(x=>{if(!byId.has(String(x.id)))byId.set(String(x.id),x)});
     }
   }catch(e){console.warn('تعذر تحميل المحتوى المحلي',e)}
+  window.__publishedMaterialsLoadError = byId.size ? null : supabaseError;
   return Array.from(byId.values()).sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||'')));
 }
-function materialCard(x){const names={video:'🎬 فيديو / درس',exam:'📝 امتحان',test:'🧪 اختبار',file:'📄 ملف'};return `<article style="background:#fff;border:1px solid #dbe8ef;border-radius:18px;padding:18px"><div style="font-size:28px">${names[x.type]||'📚'}</div><h3>${escPublic(x.title)}</h3><p>${escPublic(x.description||'')}</p><a href="${escPublic(x.file_url)}" target="_blank" rel="noopener" style="font-weight:700">فتح / مشاهدة / تنزيل</a></article>`}
-async function openPublishedMaterials(){document.getElementById('menuPanel').classList.remove('open');const ov=document.getElementById('materialsOverlay'),box=document.getElementById('allPublishedMaterials');ov.classList.add('open');ov.setAttribute('aria-hidden','false');box.innerHTML='<div class="adminEmpty">جاري تحميل المحتوى...</div>';const data=await getPublicMaterials();box.innerHTML=data.length?data.map(materialCard).join(''):'<div class="adminEmpty">لا يوجد فيديوهات أو دروس أو اختبارات منشورة حتى الآن.</div>'}
+function getYouTubeId(raw){try{const u=new URL(raw);if(u.hostname==='youtu.be')return u.pathname.split('/').filter(Boolean)[0]||'';if(!/(^|\.)youtube\.com$/.test(u.hostname))return '';if(u.pathname==='/watch')return u.searchParams.get('v')||'';const m=u.pathname.match(/^\/(embed|shorts|live)\/([^/?]+)/);return m?m[2]:''}catch(e){return ''}}
+function toggleMaterialSource(){const urlMode=document.querySelector('input[name="materialSource"]:checked')?.value==='url';document.getElementById('adminVideoUrl').style.display=urlMode?'block':'none';document.getElementById('adminFile').style.display=urlMode?'none':'block'}
+function materialCard(x){const names={video:'🎬 فيديو / درس',exam:'📝 امتحان',test:'🧪 اختبار',file:'📄 ملف'};const id=x.type==='video'?getYouTubeId(x.file_url||''):'';const player=id?`<div style="position:relative;width:100%;aspect-ratio:16/9;margin:12px 0"><iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}" title="${escPublic(x.title)}" style="position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:12px" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>`:'';return `<article style="background:#fff;border:1px solid #dbe8ef;border-radius:18px;padding:18px"><div style="font-size:28px">${names[x.type]||'📚'}</div><h3>${escPublic(x.title)}</h3><p>${escPublic(x.description||'')}</p>${player}${id?'':`<a href="${escPublic(x.file_url||'#')}" target="_blank" rel="noopener" style="font-weight:700">فتح / مشاهدة / تنزيل</a>`}</article>`}
+async function openPublishedMaterials(){document.getElementById('menuPanel').classList.remove('open');const ov=document.getElementById('materialsOverlay'),box=document.getElementById('allPublishedMaterials');ov.classList.add('open');ov.setAttribute('aria-hidden','false');box.innerHTML='<div class="adminEmpty">جاري تحميل المحتوى...</div>';const data=await getPublicMaterials();if(data.length){box.innerHTML=data.map(materialCard).join('')}else{const err=window.__publishedMaterialsLoadError;box.innerHTML='<div class="adminEmpty">'+(err?'تعذر تحميل المحتوى من قاعدة البيانات. تأكد من تشغيل ملف supabase.sql وضبط صلاحية القراءة العامة. التفاصيل: '+escPublic(err.message||err):'لا يوجد فيديوهات أو دروس أو اختبارات منشورة حتى الآن.')+'</div>'}}
 function closePublishedMaterials(){const ov=document.getElementById('materialsOverlay');ov.classList.remove('open');ov.setAttribute('aria-hidden','true')}
 </script>
 <script>
@@ -360,23 +372,28 @@ async function loadAdminData(){
 }
 function adminTypeName(t){return {video:'فيديو',exam:'امتحان',test:'اختبار',file:'ملف / PDF'}[t]||t}function adminEsc(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
 async function adminAddMaterial(){
- const f=document.getElementById('adminFile').files[0],title=document.getElementById('adminTitle'),desc=document.getElementById('adminDescription'),type=document.getElementById('adminType'),msg=document.getElementById('adminUploadMsg');
- if(!title.value.trim()||!f){msg.textContent='اكتب اسم المحتوى واختر الملف.';return} msg.textContent='جاري الرفع والنشر للجميع...';
+ const fileInput=document.getElementById('adminFile'),urlInput=document.getElementById('adminVideoUrl'),source=document.querySelector('input[name="materialSource"]:checked')?.value||'url',f=fileInput.files[0],title=document.getElementById('adminTitle'),desc=document.getElementById('adminDescription'),type=document.getElementById('adminType'),msg=document.getElementById('adminUploadMsg');
+ const rawUrl=urlInput.value.trim();let file_url='',path=null;
+ if(!title.value.trim()){msg.textContent='اكتب اسم المحتوى أولًا.';return}
+ if(source==='url'){
+   if(type.value!=='video'){msg.textContent='روابط YouTube متاحة لنوع المحتوى «فيديو» فقط. اختر رفع ملف للأنواع الأخرى.';return}
+   const id=getYouTubeId(rawUrl);if(!id){msg.textContent='الرابط غير صحيح. استخدم رابط YouTube عادي أو Shorts أو youtu.be.';return}
+   file_url='https://www.youtube.com/watch?v='+id;
+ }else if(!f){msg.textContent='اختر الملف المراد رفعه.';return}
+ msg.textContent=source==='url'?'جاري حفظ رابط الفيديو ونشره...':'جاري الرفع والنشر للجميع...';
  try{
   if(!window.supabase||!window.SUPABASE_URL||!window.SUPABASE_ANON_KEY)throw new Error('إعدادات Supabase غير مكتملة.');
   const sb=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
   const {data:{user}}=await sb.auth.getUser(); if(!user)throw new Error('جلسة الإدارة غير موجودة. سجل الدخول مرة أخرى.');
-  const safeName=f.name.replace(/[^a-zA-Z0-9._-]/g,'_'); const path=`${user.id}/${crypto.randomUUID()}-${safeName}`;
-  // رفع قابل للاستكمال (TUS) مع شريط تقدم، بدل انتظار upload التقليدي للملف كاملًا.
-  await uploadMaterialResumable(f,path,user,msg);
-  const pub=sb.storage.from('materials').getPublicUrl(path); const file_url=pub.data.publicUrl;
+  if(source==='file'){
+   const safeName=f.name.replace(/[^a-zA-Z0-9._-]/g,'_');path=`${user.id}/${crypto.randomUUID()}-${safeName}`;
+   await uploadMaterialResumable(f,path,user,msg);
+   const pub=sb.storage.from('materials').getPublicUrl(path);file_url=pub.data.publicUrl;
+  }
   const ins=await sb.from('materials').insert({title:title.value.trim(),type:type.value,description:desc.value.trim(),file_url,file_path:path,created_by:user.id}).select().single();
   if(ins.error)throw ins.error;
-  title.value='';desc.value='';document.getElementById('adminFile').value='';msg.textContent='تم النشر بنجاح ✅ الآن سيظهر لكل زوار المنصة.';loadAdminData();
- }catch(e){
-  try{const r=await fetch('/api/admin/materials',{method:'POST',headers:{'Content-Type':'application/octet-stream','X-Title':title.value.trim(),'X-Type':type.value,'X-Description':desc.value.trim(),'X-Filename':f.name},body:f});const j=await r.json().catch(()=>({}));if(r.ok){title.value='';desc.value='';document.getElementById('adminFile').value='';msg.textContent='تم الحفظ على السيرفر المحلي فقط. لو لم يظهر للطلاب، تأكد من إعداد Supabase والاستضافة.';loadAdminData();return}}catch(_){}
-  msg.textContent='فشل النشر: '+(e.message||'خطأ غير معروف');
- }
+  title.value='';desc.value='';urlInput.value='';fileInput.value='';msg.textContent='تم النشر بنجاح ✅ '+(source==='url'?'سيعمل الفيديو داخل صفحة الدورات.':'الآن سيظهر المحتوى للطلاب.');loadAdminData();
+ }catch(e){msg.textContent='فشل النشر على Supabase: '+(e.message||'خطأ غير معروف');}
 }
 
 async function uploadMaterialResumable(file,path,user,msg){

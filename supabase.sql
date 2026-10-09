@@ -141,3 +141,46 @@ $$;
 
 revoke all on function public.get_published_materials() from public;
 grant execute on function public.get_published_materials() to anon, authenticated;
+
+-- Persistent registration counters for deployments whose local filesystem is ephemeral (e.g. Back4App).
+create table if not exists public.platform_registrations (
+  email text primary key,
+  role text not null check (role in ('student','teacher','school')),
+  created_at timestamptz not null default now()
+);
+alter table public.platform_registrations enable row level security;
+revoke all on public.platform_registrations from anon, authenticated, public;
+
+create or replace function public.record_platform_registration(p_email text, p_role text)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if p_email is null or length(trim(p_email)) < 3 or p_role not in ('student','teacher','school') then
+    raise exception 'Invalid registration';
+  end if;
+  insert into public.platform_registrations(email, role)
+  values (lower(trim(p_email)), p_role)
+  on conflict (email) do update set role = excluded.role;
+end;
+$$;
+
+create or replace function public.get_platform_stats()
+returns json
+language sql
+security definer
+set search_path = public
+as $$
+  select json_build_object(
+    'students', count(*) filter (where role = 'student'),
+    'teachers', count(*) filter (where role = 'teacher'),
+    'schools', count(*) filter (where role = 'school')
+  ) from public.platform_registrations;
+$$;
+
+revoke all on function public.record_platform_registration(text,text) from public;
+revoke all on function public.get_platform_stats() from public;
+grant execute on function public.record_platform_registration(text,text) to anon, authenticated;
+grant execute on function public.get_platform_stats() to anon, authenticated;

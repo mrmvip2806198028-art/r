@@ -14,6 +14,17 @@ const adminSessions = new Map();
 const SUPABASE_URL = String(process.env.SUPABASE_URL || 'https://tlywcfgqlgbuugkhebmb.supabase.co').replace(/\/$/, '');
 const SUPABASE_ANON_KEY = String(process.env.SUPABASE_ANON_KEY || 'sb_publishable_ZpQDbZGYK80v_0sZKF5oIQ_uSnujdRS');
 
+async function supabaseRpc(name, payload = {}) {
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${name}`, {
+    method: 'POST',
+    headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  if (!response.ok) throw new Error(`Supabase RPC ${name} failed (${response.status})`);
+  const text = await response.text();
+  return text ? JSON.parse(text) : null;
+}
+
 function parseCookies(req) {
   const out = {};
   String(req.headers.cookie || '').split(';').forEach(part => {
@@ -230,13 +241,24 @@ async function api(req, res, pathname) {
   if (req.method === 'GET' && pathname === '/api/stats') {
     const d = readData();
     const base = d.base || { students: 0, teachers: 0, schools: 0 };
-    const students = base.students + d.users.filter(u => u.role === 'student').length;
-    const teachers = base.teachers + d.users.filter(u => u.role === 'teacher').length;
-    const schools = base.schools + d.users.filter(u => u.role === 'school').length;
-    const satisfaction = d.ratings.length
-      ? Math.round(d.ratings.reduce((a, x) => a + x, 0) / d.ratings.length / 5 * 100)
-      : 0;
-    return sendJson(res, 200, { students, teachers, schools, satisfaction });
+    const local = {
+      students: base.students + d.users.filter(u => u.role === 'student').length,
+      teachers: base.teachers + d.users.filter(u => u.role === 'teacher').length,
+      schools: base.schools + d.users.filter(u => u.role === 'school').length,
+      satisfaction: d.ratings.length ? Math.round(d.ratings.reduce((a, x) => a + x, 0) / d.ratings.length / 5 * 100) : 0
+    };
+    try {
+      const persistent = await supabaseRpc('get_platform_stats');
+      if (persistent && typeof persistent === 'object') {
+        return sendJson(res, 200, {
+          students: Math.max(local.students, Number(persistent.students) || 0),
+          teachers: Math.max(local.teachers, Number(persistent.teachers) || 0),
+          schools: Math.max(local.schools, Number(persistent.schools) || 0),
+          satisfaction: local.satisfaction
+        });
+      }
+    } catch (e) { console.warn('Supabase stats unavailable; using local fallback:', e.message); }
+    return sendJson(res, 200, local);
   }
 
   if (req.method === 'POST' && pathname === '/api/register') {
@@ -258,6 +280,9 @@ async function api(req, res, pathname) {
       createdAt: new Date().toISOString()
     });
     writeData(d);
+    // Persist registration counts outside Back4App's potentially ephemeral filesystem.
+    try { await supabaseRpc('record_platform_registration', { p_email: e, p_role: role }); }
+    catch (err) { console.warn('Registration count was not persisted to Supabase:', err.message); }
     return sendJson(res, 200, { ok: true });
   }
 
