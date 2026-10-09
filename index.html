@@ -378,7 +378,7 @@ async function adminAddMaterial(){
  if(source==='url'){
    if(type.value!=='video'){msg.textContent='روابط YouTube متاحة لنوع المحتوى «فيديو» فقط. اختر رفع ملف للأنواع الأخرى.';return}
    const id=getYouTubeId(rawUrl);if(!id){msg.textContent='الرابط غير صحيح. استخدم رابط YouTube عادي أو Shorts أو youtu.be.';return}
-   file_url='https://www.youtube.com/watch?v='+id;
+   file_url='https://www.youtube.com/watch?v='+id;path='youtube:'+id;
  }else if(!f){msg.textContent='اختر الملف المراد رفعه.';return}
  msg.textContent=source==='url'?'جاري حفظ رابط الفيديو ونشره...':'جاري الرفع والنشر للجميع...';
  try{
@@ -439,7 +439,7 @@ async function uploadMaterialResumable(file,path,user,msg){
  }
  msg.textContent='تم رفع الملف، جاري نشره...';
 }
-async function adminRemoveMaterial(id){if(!confirm('حذف هذا المحتوى؟'))return;try{const sb=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);const {data:item}=await sb.from('materials').select('file_path').eq('id',id).single();if(item?.file_path)await sb.storage.from('materials').remove([item.file_path]);const {error}=await sb.from('materials').delete().eq('id',id);if(error)throw error;loadAdminData();return}catch(e){}const r=await fetch('/api/admin/materials/'+encodeURIComponent(id),{method:'DELETE'});if(!r.ok)alert('تعذر الحذف');loadAdminData()}
+async function adminRemoveMaterial(id){if(!confirm('حذف هذا المحتوى؟'))return;try{const sb=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);const {data:item}=await sb.from('materials').select('file_path').eq('id',id).single();if(item?.file_path && !String(item.file_path).startsWith('youtube:'))await sb.storage.from('materials').remove([item.file_path]);const {error}=await sb.from('materials').delete().eq('id',id);if(error)throw error;loadAdminData();return}catch(e){}const r=await fetch('/api/admin/materials/'+encodeURIComponent(id),{method:'DELETE'});if(!r.ok)alert('تعذر الحذف');loadAdminData()}
 async function adminRemoveUser(id){if(!confirm('حذف هذا المستخدم؟'))return;const r=await fetch('/api/admin/users/'+encodeURIComponent(id),{method:'DELETE'});if(r.ok)loadAdminData();else alert('تعذر الحذف')}
 async function adminLogout(){await fetch('/api/admin/logout',{method:'POST'});closeAdminPanel();document.getElementById('adminLoginView').style.display='block';document.getElementById('adminPanelView').style.display='none'}
 </script>
