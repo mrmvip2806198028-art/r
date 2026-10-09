@@ -277,21 +277,23 @@ applyLanguage();
 <script>
 function escPublic(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 async function getPublicMaterials(){
- let lastError='';
- try{
-  if(window.supabase&&window.SUPABASE_URL&&window.SUPABASE_ANON_KEY){
-   const sb=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
-   // نستخدم دالة عامة آمنة حتى يرى جميع الطلاب نفس المحتوى المنشور.
-   const {data,error}=await sb.rpc('get_published_materials');
-   if(!error&&Array.isArray(data)) return data;
-   if(error) lastError=error.message||'تعذر قراءة المحتوى المنشور';
-  }else lastError='إعدادات Supabase غير مكتملة';
- }catch(e){lastError=e.message||'تعذر الاتصال بـ Supabase'}
- try{
-   const r=await fetch('/api/materials');
-   if(r.ok){const d=await r.json();if(Array.isArray(d))return d}
- }catch(e){}
- return [];
+  // اجمع المحتوى من المصدرين؛ بعض النسخ القديمة قد تحفظ المحتوى على السيرفر المحلي.
+  const byId = new Map();
+  try{
+    if(window.supabase&&window.SUPABASE_URL&&window.SUPABASE_ANON_KEY){
+      const sb=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
+      const {data,error}=await sb.rpc('get_published_materials');
+      if(!error&&Array.isArray(data)) data.forEach(x=>byId.set(String(x.id),x));
+    }
+  }catch(e){console.warn('تعذر تحميل محتوى Supabase',e)}
+  try{
+    const r=await fetch('/api/materials',{cache:'no-store'});
+    if(r.ok){
+      const local=await r.json();
+      if(Array.isArray(local)) local.forEach(x=>{if(!byId.has(String(x.id)))byId.set(String(x.id),x)});
+    }
+  }catch(e){console.warn('تعذر تحميل المحتوى المحلي',e)}
+  return Array.from(byId.values()).sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||'')));
 }
 function materialCard(x){const names={video:'🎬 فيديو / درس',exam:'📝 امتحان',test:'🧪 اختبار',file:'📄 ملف'};return `<article style="background:#fff;border:1px solid #dbe8ef;border-radius:18px;padding:18px"><div style="font-size:28px">${names[x.type]||'📚'}</div><h3>${escPublic(x.title)}</h3><p>${escPublic(x.description||'')}</p><a href="${escPublic(x.file_url)}" target="_blank" rel="noopener" style="font-weight:700">فتح / مشاهدة / تنزيل</a></article>`}
 async function openPublishedMaterials(){document.getElementById('menuPanel').classList.remove('open');const ov=document.getElementById('materialsOverlay'),box=document.getElementById('allPublishedMaterials');ov.classList.add('open');ov.setAttribute('aria-hidden','false');box.innerHTML='<div class="adminEmpty">جاري تحميل المحتوى...</div>';const data=await getPublicMaterials();box.innerHTML=data.length?data.map(materialCard).join(''):'<div class="adminEmpty">لا يوجد فيديوهات أو دروس أو اختبارات منشورة حتى الآن.</div>'}
@@ -339,10 +341,18 @@ async function loadAdminData(){
      if(!error&&Array.isArray(data)) mats=data;
    }
  } catch(e) { console.warn('تعذر قراءة منشورات Supabase',e); }
- // التوافق مع النسخ القديمة التي تخزّن المنشورات محليًا.
- if(!mats.length){
-   try { const mr=await fetch('/api/materials'); if(mr.ok){const md=await mr.json();if(Array.isArray(md))mats=md;} } catch(e) {}
- }
+ // اجمع منشورات Supabase والمنشورات المحلية حتى لا تختفي المنشورات القديمة/الاحتياطية.
+ try {
+   const mr=await fetch('/api/materials',{cache:'no-store'});
+   if(mr.ok){
+     const md=await mr.json();
+     if(Array.isArray(md)){
+       const ids=new Set(mats.map(x=>String(x.id)));
+       md.forEach(x=>{if(!ids.has(String(x.id)))mats.push(x)});
+     }
+   }
+ } catch(e) { console.warn('تعذر تحميل المنشورات المحلية',e); }
+ mats.sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||'')));
  document.getElementById('adminMaterialsCount').textContent=mats.length;
  document.getElementById('adminMaterials').innerHTML=mats.length?mats.map(x=>`<div class="adminItem"><b>${adminEsc(x.title)}</b> — ${adminTypeName(x.type)}<div>${adminEsc(x.description||'')}</div><div style="margin-top:8px"><a href="${adminEsc(x.file_url)}" target="_blank" rel="noopener">فتح / تنزيل</a> <button class="adminDel" onclick="adminRemoveMaterial('${x.id}')">حذف</button></div></div>`).join(''):'<div class="adminEmpty">لا يوجد محتوى منشور</div>';
  document.getElementById('adminUsers').innerHTML=j.users.length?j.users.map(u=>`<tr><td>${adminEsc(u.name)}</td><td>${adminEsc(u.email)}</td><td>${({student:'طالب',teacher:'مدرس',school:'مدرسة / مركز تعليمي'}[u.role]||u.role)}</td><td>${new Date(u.createdAt).toLocaleString('ar-EG')}</td><td><button class="adminDel" onclick="adminRemoveUser('${u.id}')">حذف</button></td></tr>`).join(''):'<tr><td colspan="5" class="adminEmpty">لا يوجد مستخدمون</td></tr>';
@@ -364,7 +374,7 @@ async function adminAddMaterial(){
   if(ins.error)throw ins.error;
   title.value='';desc.value='';document.getElementById('adminFile').value='';msg.textContent='تم النشر بنجاح ✅ الآن سيظهر لكل زوار المنصة.';loadAdminData();
  }catch(e){
-  try{const r=await fetch('/api/admin/materials',{method:'POST',headers:{'Content-Type':'application/octet-stream','X-Title':title.value.trim(),'X-Type':type.value,'X-Description':desc.value.trim(),'X-Filename':f.name},body:f});const j=await r.json().catch(()=>({}));if(r.ok){title.value='';desc.value='';document.getElementById('adminFile').value='';msg.textContent='تم النشر بنجاح ✅';loadAdminData();return}}catch(_){}
+  try{const r=await fetch('/api/admin/materials',{method:'POST',headers:{'Content-Type':'application/octet-stream','X-Title':title.value.trim(),'X-Type':type.value,'X-Description':desc.value.trim(),'X-Filename':f.name},body:f});const j=await r.json().catch(()=>({}));if(r.ok){title.value='';desc.value='';document.getElementById('adminFile').value='';msg.textContent='تم الحفظ على السيرفر المحلي فقط. لو لم يظهر للطلاب، تأكد من إعداد Supabase والاستضافة.';loadAdminData();return}}catch(_){}
   msg.textContent='فشل النشر: '+(e.message||'خطأ غير معروف');
  }
 }
